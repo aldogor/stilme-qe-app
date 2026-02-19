@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme - Dark mode -->
+    <style name="Base.Theme.StudioSTILMEQE" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary colors - Violet (lighter for dark mode) -->
+        <item name="colorPrimary">#CE93D8</item>
+        <item name="colorPrimaryDark">#AB47BC</item>
+        <item name="colorPrimaryContainer">#6A1B9A</item>
+        <item name="colorOnPrimary">#4A148C</item>
+        <item name="colorOnPrimaryContainer">#F3E5F5</item>
+
+        <!-- Secondary colors -->
+        <item name="colorSecondary">#80CBC4</item>
+        <item name="colorSecondaryContainer">#00695C</item>
+        <item name="colorOnSecondary">#004D40</item>
+        <item name="colorOnSecondaryContainer">#E0F2F1</item>
+
+        <!-- Tertiary colors -->
+        <item name="colorTertiary">#FFAB91</item>
+        <item name="colorTertiaryContainer">#BF360C</item>
+        <item name="colorOnTertiary">#BF360C</item>
+        <item name="colorOnTertiaryContainer">#FFCCBC</item>
+
+        <!-- Error colors -->
+        <item name="colorError">#EF9A9A</item>
+        <item name="colorErrorContainer">#B71C1C</item>
+        <item name="colorOnError">#B71C1C</item>
+        <item name="colorOnErrorContainer">#FFCDD2</item>
+
+        <!-- Background and surface -->
+        <item name="android:colorBackground">#121212</item>
+        <item name="colorOnBackground">#E1E1E1</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E1E1E1</item>
+        <item name="colorSurfaceVariant">#2D2D2D</item>
+        <item name="colorOnSurfaceVariant">#CAC4D0</item>
+        <item name="colorOutline">#49454F</item>
+        <item name="colorOutlineVariant">#2D2D2D</item>
+
+        <!-- Surface containers -->
+        <item name="colorSurfaceContainerLowest">#0D0D0D</item>
+        <item name="colorSurfaceContainerLow">#1A1A1A</item>
+        <item name="colorSurfaceContainer">#1E1E1E</item>
+        <item name="colorSurfaceContainerHigh">#252525</item>
+        <item name="colorSurfaceContainerHighest">#2D2D2D</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">#121212</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">#121212</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>
+
+    <!-- Legacy theme name for compatibility -->
+    <style name="Base.Theme.MonitorUtilizzoSTILMEQE" parent="Base.Theme.StudioSTILMEQE" />
+
+</resources>

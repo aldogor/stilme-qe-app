@@ -1,0 +1,250 @@
+<resources>
+    <string name="app_name">Studio MIND TIME</string>
+    <string name="app_title">Studio MIND TIME</string>
+
+    <!-- Common buttons -->
+    <string name="cancel">Annulla</string>
+    <string name="continue_button">Continua</string>
+    <string name="back_button">Indietro</string>
+    <string name="close_button">Chiudi</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Studio MIND TIME</string>
+    <string name="welcome_subtitle">Capire il nostro rapporto con i Social Media</string>
+    <string name="welcome_what_we_do_title">Cosa farai</string>
+    <string name="welcome_what_we_do_content">• Compilerai un questionario iniziale (10 min)\n• Compilerai un breve questionario, 1 volta al mese, per 4 mesi (5 min)\n• Forse, ti chiederemo di ridurre il tempo che trascorri su alcune app</string>
+    <string name="welcome_privacy_title">La tua privacy</string>
+    <string name="welcome_privacy_content">• L\'App raccoglierà solo dati anonimi: sia sull\'uso delle app social, che sulle risposte ai questionari.\n• Non sei identificabile tramite i dati che ci fornisci e tutti i dati rimangono crittografati, sicuri e inviati solo a server dell\'Università di Torino.\n• La partecipazione è completamente volontaria. Puoi ritirarti in qualsiasi momento senza conseguenze, e i tuoi dati verranno eliminati.</string>
+    <string name="welcome_more_info">Maggiori informazioni sullo studio</string>
+    <string name="welcome_info_url">https://studioscreentime.my.canva.site/linktree</string>
+    <string name="privacy_url">https://drive.google.com/file/d/1QNKl_yjExDtf7TTA7ZDu-sDF55g93tdR/view?usp=drive_link</string>
+
+    <!-- Consent Screen -->
+    <string name="consent_title">Consenso informato</string>
+    <string name="consent_subtitle">Leggi attentamente prima di procedere</string>
+    <string name="consent_full_text">Gli Screen Time Limits contribuiscono a ridurre l\'uso dei social media e a migliorare la salute mentale? Uno studio quasi-sperimentale\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nFOGLIO INFORMATIVO\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nGentilissimo/a,\n\ncon la presente informativa ti viene proposta la possibilità di partecipare a uno studio promosso dalla Scuola di Specializzazione in Igiene e Medicina Preventiva dell\'Università di Torino. II progetto di ricerca ha come obiettivo quello di indagare la prevalenza della Social Media Addiction (SMA) in una popolazione di soggetti di età compresa tra i 18 e i 30 anni. Inoltre, verrà indagata l\'associazione della SMA con lo stato di salute mentale, valutato attraverso scale validate che indagano l\'ansia, la depressione, lo stress e la Fear of Missing Out (FOMO). Infine, il progetto di ricerca si propone di valutare l\'efficacia dell\'impiego degli \"Screen Time Limits\" (STL) nel ridurre lo screen time, ovvero il tempo passato davanti allo schermo del proprio dispositivo, e nel migliorare i sintomi da SMA e lo stato di salute mentale (ansia, depressione, stress, FOMO).\n\nLa Social Media Addiction può essere definita come un utilizzo compulsivo dei Social Media (SM), tale da disturbare significativamente il funzionamento dell\'utente in aree importanti della vita, quali le relazioni interpersonali, la performance lavorativa o accademica e la salute fisica.\n\nNumerosi studi hanno rivelato una possibile correlazione tra dipendenza da Social Media e un peggioramento della salute mentale, di conseguenza risulta evidente la necessità di approfondire questa correlazione e individuare possibili strumenti efficaci nel limitare gli effetti negativi dei social media.\n\nGli Screen Time Limits sono degli strumenti utili a ridurre il tempo trascorso sul proprio device mobile. Essi sono già integrati e presenti di default nei sistemi operativi iOS di Apple e Android di Alphabet.\n\nLa tua adesione è totalmente libera e i dati saranno trattati in forma pseudonimizzata. Lo studio non prevede nessun esame clinico o strumentale, ma solo la compilazione di questionari e la condivisione di alcuni dati pseudonimizzati presenti sul tuo device mobile, tramite un\'applicazione creata appositamente, ed esclusivamente nel caso in cui accettassi di partecipare allo studio.\n\nIn particolare, ti verrà richiesto di compilare una serie di questionari che esplorano il tuo uso dei social media, il tuo stato emotivo e altri aspetti del tuo comportamento. Tutti i questionari sono pseudonimizzati mediante un codice alfanumerico casuale generato localmente dal tuo dispositivo e le modalità di raccolta non permettono, neppure indirettamente, l\'identificazione dell\'interessato da parte dei ricercatori o di terzi. Ti verrà presentato un questionario da compilare una sola volta all\'inizio dello studio, e successivamente ti verrà proposto un questionario più breve una volta al mese, per un periodo di 4 mesi.\n\nInoltre, ti verrà richiesta l\'autorizzazione ad estrarre dei dati sui tempi di utilizzo del tuo device mobile: con il tuo consenso verranno estratti, in modalità pseudonimizzata e sicura, i dati relativi al tempo trascorso sulle applicazioni di social media presenti sul tuo dispositivo. In particolare, le applicazioni prese in considerazione sono le seguenti: Instagram, TikTok, Facebook, Youtube, Pinterest, Twitch, BeReal, SnapChat, X (ex \"Twitter\"), Linkedin, Reddit.\n\nNello specifico saranno raccolte le seguenti informazioni:\n• tempi di utilizzo delle app sul device\n• numero di volte che le app vengono aperte nell\'arco di 24 ore\n\nI dati sono estrapolati dallo strumento nativo Android, denominato Digital Wellbeing, che analizza già sul tuo dispositivo l\'attività relativa ai 30 giorni precedenti alla consultazione. I dati verranno utilizzati per misurare eventuali cambiamenti del tempo trascorso sulle Social Media App e non sono in ogni caso riconducibili alla tua persona.\n\nL\'invio dei dati avverrà 1 volta ogni 30 giorni, per un periodo di 4 mesi e sarà necessario il tuo coinvolgimento attivo per effettuare l\'invio dei dati che ci permette di svolgere la ricerca.\n\nTutti i partecipanti dovranno scaricare l\'applicazione \"MIND TIME\", associata al software REDCap di Ateneo con cui risponderanno alle domande di un questionario iniziale.\n\nL\'ultima sezione di ogni questionario richiederà ai partecipanti il consenso ad inviare i dati relativi ai tempi di utilizzo dell App di Social Media, estratti dalla sezione Digital Wellbeing dei device Android.\n\nAl termine del questionario, ai partecipanti verrà chiesto di dichiarare se sono interessati o meno a ridurre il loro uso dei social media. In caso di risposta affermativa, dovranno scegliere se utilizzare o meno gli Screen Time Limits per ridurre il proprio uso dei social media.\n\nSulla base delle preferenze espresse a partire da queste domande i partecipanti verranno distribuiti in tre gruppi, composti come segue:\n\n• gruppo 1: coloro che non sono interessati a cambiare il tempo trascorso sui social media (gruppo di controllo). Essi verranno seguiti per i successivi 4 mesi e fino al termine dello studio come gruppo di controllo;\n\n• gruppo 2: coloro che vogliono ridurre l\'uso dei SM utilizzando strumenti di STL. I partecipanti facenti parte di questo gruppo dovranno attivare il limite giornaliero di 30 minuti, tramite gli strumenti già presenti nel proprio device, per le app di social media precedentemente elencate. Essi verranno seguiti per i successivi 4 mesi e rappresenteranno il gruppo sperimentale d\'interesse;\n\n• gruppo 3: coloro che vogliono ridurre l\'uso solo con impegno personale, senza l\'ausilio degli STL. I partecipanti di questo gruppo non dovranno attivare gli STL nel proprio device, né dovranno utilizzare altri strumenti di app esterne. Anch\'essi verranno seguiti per i successivi 4 mesi come ulteriore gruppo sperimentale.\n\nAi partecipanti di tutti i gruppi, sarà quindi chiesto di rispondere ad un questionario mensile, più breve di quello iniziale, 1 volta al mese per 4 mesi. Al fondo di ogni questionario, dovranno allegare i dati aggiornati scaricati sul file .csv tramite l\'app prodotta dal gruppo di ricerca, come spiegato sopra.\n\nPertanto, a tutti i gruppi verranno proposti un totale di 5 questionari: un questionario al tempo zero (quando si scarica l\'app) e un questionario ogni mese, più breve del primo, per un massimo di quattro mesi. Inoltre, per tutti i gruppi verranno scaricati i tempi di utilizzo previo consenso come descritto sopra. Soltanto il gruppo 2 invece dovrà ridurre l\'uso dei SM tramite strumenti già presenti nel proprio device, come spiegato nell\'app.\n\nLa durata di compilazione del primo questionario è di circa 8 minuti. Non è previsto nessun costo a tuo carico.\n\nAlcuni partecipanti allo studio potrebbero fare esperienza di sintomi da craving o da astinenza da Social Media: si ricorda che per necessità è disponibile Lo Spazio di Ascolto dell\'Università di Torino, un servizio gratuito rivolto a studenti e studentesse dell\'Università di Torino che vivono situazioni di disagio o di malessere psico-fisico.\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nTRATTAMENTO DEI DATI PERSONALI\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nIn nessun momento nel questionario ti verrà chiesto il nominativo o l\'indirizzo mail, né questi possono essere registrati in alcun modo.\n\nSoltanto i soggetti autorizzati al trattamento dei dati potranno accedere ai dati ed elaborarli.\n\nI dati raccolti saranno utilizzati esclusivamente ai fini dello svolgimento del presente studio, nel rispetto delle normative vigenti, e non saranno comunicati ad alcun ente o soggetto esterno. I dati saranno analizzati in forma totalmente anonima e aggregata ed eventualmente inseriti in pubblicazioni. In qualsiasi momento sarà possibile contattare i ricercatori coinvolti nel progetto, per domande riguardo alla ricerca o notizie sui risultati che saranno pubblicati.\n\nL\'informativa completa sul trattamento dei dati personali ai sensi degli artt. 13 e 14 del Regolamento 2016/679/UE, è disponibile al seguente link.\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nCONSENSO INFORMATO\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nAcconsentendo alla partecipazione allo studio, si dichiara di aver preso visione e di accettare l\'informativa.\n\nNella fattispecie, selezionando Acconsento:\n\n• Acconsento liberamente e volontariamente a partecipare allo studio;\n• Dichiaro di aver preso visione e compreso l\'informativa al trattamento dei dati personali;\n• Dichiaro di prestare il mio consenso al trattamento dei miei dati personali per le finalità e con le modalità descritte nell\'informativa;\n• Dichiaro di essere stato informato/a nell\'informativa precedente sull\'assenza di rischi correlati allo studio;\n• Ho compreso i miei diritti durante la partecipazione allo studio e sono consapevole di potermi ritirare in qualunque momento senza dover fornire spiegazioni;\n• Dichiaro di aver avuto a disposizione tempo sufficiente per poter leggere attentamente e comprendere il contenuto della precedente scheda informativa;\n• Dichiaro di aver avuto la possibilità di conservare il foglio informativo precedente e il presente consenso scaricandoli dal seguente link.\n• Sono consapevole che per ogni problema o per eventuali ulteriori informazioni potrò rivolgermi ai Responsabili del Progetto attraverso l\'email progettoscreentime.dsspp@unito.it.</string>
+    <string name="consent_link_privacy_info">seguente link</string>
+    <string name="consent_link_download_docs">seguente link</string>
+    <string name="consent_privacy_info_url">https://drive.google.com/file/d/1QNKl_yjExDtf7TTA7ZDu-sDF55g93tdR/view?usp=sharing</string>
+    <string name="consent_download_docs_url">https://drive.google.com/file/d/1UYAes5dcajMgq-x62abvQNnglszgFi1P/view?usp=sharing</string>
+    <!-- Consent Yes/No Questions -->
+    <string name="consent_question_informed">Ho letto e compreso le informazioni sopra riportate, e acconsento a partecipare allo studio?</string>
+    <string name="consent_question_privacy">Acconsento al trattamento dei dati secondo l\'informativa sulla privacy?</string>
+    <string name="consent_answer_yes">Sì</string>
+    <string name="consent_answer_no">No</string>
+    <string name="consent_declined_title">Consenso necessario</string>
+    <string name="consent_declined_message">Per partecipare allo studio è necessario acconsentire a entrambe le domande. Se hai dubbi, puoi contattarci all\'indirizzo progettoscreentime.dsspp@unito.it</string>
+    <string name="consent_declined_understood">Ho capito</string>
+    <string name="consent_accept">Accetta e continua</string>
+
+    <!-- Permission Screen -->
+    <string name="permission_title">Permessi necessari</string>
+    <string name="permission_explanation">Per funzionare correttamente, l\'app necessita dei seguenti permessi:</string>
+    <string name="permission_revoked_title">Permessi revocati</string>
+    <string name="permission_revoked_explanation">Per continuare a utilizzare l\'app, devi riattivare i permessi necessari.</string>
+    <string name="permission_revoked_note">L\'app non può funzionare senza questi permessi perché deve raccogliere i dati di utilizzo e inviarti promemoria per i questionari.</string>
+    <string name="permission_usage_title">Statistiche di utilizzo</string>
+    <string name="permission_usage_description">Per raccogliere dati anonimi sull\'uso delle app social.</string>
+    <string name="permission_usage_help">Non riesci ad attivarlo? Consulta la guida</string>
+    <string name="permission_usage_help_url">https://support.google.com/android/answer/12623953?hl=it</string>
+    <string name="permission_notification_title">Notifiche</string>
+    <string name="permission_notification_description">Per ricordarti di compilare i questionari mensili</string>
+    <string name="permission_status_granted">Concesso</string>
+    <string name="permission_status_denied">Non concesso</string>
+    <string name="permission_grant_usage_button">Concedi permesso statistiche</string>
+    <string name="permission_grant_notification_button">Concedi permesso notifiche</string>
+    <string name="permission_grant_button">Concedi permesso</string>
+    <string name="permission_battery_title">Ottimizzazione batteria</string>
+    <string name="permission_battery_description">Per garantire la raccolta dati in background senza interruzioni</string>
+    <string name="permission_grant_battery_button">Disabilita ottimizzazione</string>
+
+    <!-- Ineligible Screen -->
+    <string name="ineligible_title">Non idoneo</string>
+    <string name="ineligible_default_reason">Ci dispiace, non soddisfi i criteri di inclusione per questo studio.</string>
+    <string name="ineligible_reason_not_unito">Ci dispiace, se non sei studente di UniTO, non soddisfi i criteri di questo studio.</string>
+    <string name="ineligible_reason_age">Ci dispiace, se hai più di 30 anni, non soddisfi i criteri di questo studio.</string>
+    <string name="ineligible_reason_using_stl">Ci dispiace, se usi già altri mezzi per limitare i tuoi tempi di utilizzo, non soddisfi i criteri di questo studio.</string>
+    <string name="ineligible_thank_you">Ti ringraziamo comunque per l\'interesse mostrato verso la nostra ricerca, puoi anche aiutarci a diffonderla!</string>
+
+    <!-- Questionnaire -->
+    <string name="text_input_hint">Scrivi qui la tua risposta</string>
+    <string name="submit_button">Invia questionario</string>
+    <string name="questions_answered_format">%1$d di %2$d domande completate</string>
+    <string name="validation_missing_required">Rispondi a tutte le domande obbligatorie per continuare</string>
+
+    <!-- Group Instructions Screen - Control Group (Group 1) -->
+    <string name="group_control_title">Limita il tuo uso dei social media</string>
+    <string name="group_control_subtitle">Sei stato/a assegnato/a al gruppo che ci aiuterà a capire come cambia l\'uso dei social nel tempo: dovrai solo compilare i questionari.</string>
+    <string name="group_control_instructions_title">Per i prossimi 4 mesi dovrai:</string>
+    <string name="group_control_instructions">• Compilare 1 questionario al mese\n• NON utilizzare sistemi che limitano il tempo di utilizzo dei tuoi Social Media</string>
+
+    <!-- Group Instructions Screen - STL Intervention Group (Group 2) -->
+    <string name="group_stl_title">Imposta i \"Limiti ai Tempi di Utilizzo\"</string>
+    <string name="group_stl_subtitle">Sei stato/a assegnato/a al gruppo che prova a ridurre il tempo che trascorre sui Social Media, usando i \"Limiti ai Tempi di Utilizzo\" dello smartphone.</string>
+    <string name="group_stl_instructions_title">Nei prossimi 4 mesi dovrai:</string>
+    <string name="group_stl_instructions">• Impostare i \"Limiti ai Tempi di Utilizzo\" per i tuoi Social Media, seguendo le istruzioni qui sotto\n• Rispettare questi limiti per i prossimi 4 mesi\n• Compilare 1 questionario al mese</string>
+    <string name="group_stl_setup_title">Come impostare i limiti</string>
+    <string name="group_stl_setup_instructions">1. Apri l\'app Impostazioni del tuo telefono\n\n2. Cerca \"Benessere digitale\" o \"Digital Wellbeing\"\n   • Samsung: Impostazioni → Benessere digitale e controllo genitori\n   • Pixel/Android stock: Impostazioni → Benessere digitale\n\n3. Se presente, tocca \"Dashboard\" o \"Pannello di controllo\"\n\n4. Per OGNI app social che usi, imposta un timer di 30 minuti:\n   a) Tocca il nome dell\'app (es. Instagram)\n   b) Tocca \"Timer app\" o l\'icona della clessidra\n   c) Imposta 30 minuti\n   d) Tocca \"OK\"\n\nFallo per tutte le App da limitare, che hai installato sul tuo Smartphone.</string>
+    <string name="group_stl_apps_list_title">App da limitare:</string>
+    <string name="group_stl_apps_list">• Instagram\n• TikTok\n• Facebook\n• YouTube\n• Pinterest\n• Twitch\n• BeReal\n• Snapchat\n• X (Twitter)\n• LinkedIn\n• Reddit</string>
+    <string name="group_stl_important">Importante</string>
+    <string name="group_stl_important_content">Mantieni questi limiti attivi per tutti i 4 mesi dello studio. Quando raggiungi il limite giornaliero, l\'app si bloccherà fino a mezzanotte.</string>
+    <string name="group_stl_pdf_button">Scarica la guida completa (PDF)</string>
+    <string name="group_stl_pdf_url">https://drive.google.com/file/d/1fmxs1yXNZ0w4dWmZ5GziaZR5NKYGTR4Q/view?usp=sharing</string>
+
+    <!-- Group Instructions Screen - Personal Commitment Group (Group 3) -->
+    <string name="group_commitment_title">Continua così</string>
+    <string name="group_commitment_subtitle">Sei stato/a assegnato/a al gruppo che prova a ridurre il tempo sui Social Media senza usare strumenti, che ci aiuterà a capire cosa succede quando cerchiamo di cambiare il nostro utilizzo solo con la forza di volontà.</string>
+    <string name="group_commitment_instructions_title">Nei prossimi 4 mesi dovrai:</string>
+    <string name="group_commitment_instructions">• Provare a ridurre il tuo uso dei social solo con la tua forza di volontà, senza usare altri strumenti. Cerca di non utilizzarli per più di 30 minuti al giorno, senza aiuti esterni.\n• NON impostare sistemi che limitano il tempo di utilizzo dei tuoi Social Media.\n• Compilare 1 questionario al mese</string>
+
+    <!-- Group Instructions - Common -->
+    <string name="group_instructions_done">Continua</string>
+    <string name="group_instructions_more_info">Maggiori informazioni sullo studio</string>
+
+    <!-- Success Messages after Questionnaire Submission -->
+    <string name="submission_success_baseline_title">Questionario inviato con successo</string>
+    <string name="submission_success_baseline_message">Grazie! Ci vediamo il mese prossimo e ricorda le istruzioni (e non ti preoccupare, i prossimi questionari saranno più brevi)!</string>
+    <string name="submission_success_monthly_title">Questionario inviato con successo</string>
+    <string name="submission_success_monthly_message">Grazie per aver completato il questionario di questo mese!\nIl prossimo appuntamento sarà tra circa 30 giorni.</string>
+    <string name="submission_success_final_title">Hai completato tutti i questionari</string>
+    <string name="submission_success_final_message">Grazie mille davvero per aver partecipato allo studio, da parte di tutto il team di ricerca di Mind Time.\n\nIl tuo contributo è anonimo, al sicuro e preziosissimo per capire meglio il nostro rapporto con i Social Media.</string>
+
+    <!-- Thank You / Study Complete Screen -->
+    <string name="thank_you_title">Hai completato tutti i questionari</string>
+    <string name="thank_you_message">Grazie mille davvero per aver partecipato allo studio, da parte di tutto il team di ricerca di Mind Time.\n\nIl tuo contributo è anonimo, al sicuro e preziosissimo per capire meglio il nostro rapporto con i Social Media.</string>
+    <string name="thank_you_counseling_title">Lo sportello psicologico di Ateneo</string>
+    <string name="thank_you_counseling_content">Ricorda, se hai bisogno è sempre disponibile Lo Spazio di Ascolto dell\'Università di Torino: un servizio gratuito rivolto a studenti e studentesse dell\'Università di Torino che vivono situazioni di disagio o di malessere psico-fisico.</string>
+    <string name="thank_you_counseling_button">Scopri di più</string>
+    <string name="thank_you_counseling_url">https://www.unito.it/servizi/lo-studio/counseling-universitario-e-spazio-dascolto</string>
+
+    <!-- Main Activity - Questionnaire Card -->
+    <string name="questionnaire_due">Questionario disponibile</string>
+    <string name="questionnaire_due_description">È il momento di compilare il questionario.</string>
+    <string name="questionnaire_submission_success">Grazie!</string>
+    <string name="questionnaire_see_you_next_month">Ci vediamo il mese prossimo!</string>
+
+    <!-- Main Activity - Study Status -->
+    <string name="main_status_title">Stato dello studio</string>
+    <string name="next_questionnaire_format">Prossimo questionario tra %1$d giorni</string>
+    <string name="main_info_text">I dati di utilizzo vengono raccolti automaticamente in background e inviati insieme al questionario mensile.</string>
+    <string name="open_questionnaire">Compila questionario</string>
+
+    <!-- Main Activity - Group Instructions Card -->
+    <string name="main_group_card_title">Sai in che gruppo sei?</string>
+    <string name="main_group_card_description">Ti ricordi a quale gruppo dello studio sei stato assegnato? Qui trovi tutte le istruzioni.</string>
+    <string name="main_group_card_button">Vedi istruzioni</string>
+
+    <!-- Main Activity - Invite Friends Card -->
+    <string name="main_invite_title">Vuoi aiutarci ancora di più?</string>
+    <string name="main_invite_description">Puoi raccontare di Mind Time a qualsiasi studente di UniTO tra i 18 e i 30 anni.</string>
+    <string name="main_invite_button">Condividi lo studio</string>
+
+    <!-- Debug -->
+    <string name="export_csv_debug">[Debug] Esporta CSV</string>
+    <string name="debug_skip_month">[Debug] Salta tempo</string>
+    <string name="csv_exported">CSV copiato negli appunti (%1$d giorni)</string>
+    <string name="csv_export_error">Errore nell\'esportazione CSV</string>
+    <string name="no_data_to_export">Nessun dato da esportare</string>
+    <string name="complete_data_exported">Dati completi copiati negli appunti (CSV)</string>
+    <string name="no_payload_available">Nessun dato disponibile. Completa prima un questionario.</string>
+    <string name="debug_time_jump_title">Simulazione tempo</string>
+    <string name="debug_jumped_days">+%1$d giorni → Data simulata: %2$s</string>
+    <string name="debug_offset_reset">Offset azzerato, tornato alla data reale</string>
+    <string name="debug_study_already_complete">Lo studio è già completato</string>
+    <string name="debug_quick_jump">Salto rapido (giorni)</string>
+    <string name="debug_custom_days">Oppure inserisci un valore</string>
+    <string name="debug_days_hint">Giorni</string>
+    <string name="debug_days_suffix">giorni</string>
+    <string name="debug_jump_button">Salta</string>
+    <string name="debug_reset_button">Reset data</string>
+    <string name="debug_test_notification">Test notifica</string>
+    <string name="debug_notification_triggered">Controllo notifiche attivato</string>
+
+    <!-- Data extraction confirmation -->
+    <string name="confirm_data_extraction_title">Conferma invio dati</string>
+    <string name="confirm_data_extraction_message">Stai per inviare:\n\n• Le tue risposte al questionario\n• I dati di utilizzo delle tue app\n\nTutto sarà trattato in forma anonima e crittografata, solo per scopi di ricerca dell\'Università di Torino.</string>
+    <string name="confirm_send">Continua</string>
+    <string name="cancel_send">Annulla</string>
+
+    <!-- Study Progress -->
+    <string name="study_progress_title">Avanzamento studio</string>
+    <string name="study_progress_format">Mese %1$d di 4</string>
+    <string name="study_progress_complete">Studio completato</string>
+    <string name="timepoint_baseline">Questionario iniziale</string>
+    <string name="timepoint_month_format">Mese %1$d</string>
+    <string name="timepoint_completed">Completato</string>
+    <string name="timepoint_current">Da completare</string>
+    <string name="timepoint_future">In attesa</string>
+
+    <!-- Contact Section -->
+    <string name="contact_title">Hai bisogno di aiuto?</string>
+    <string name="contact_description">Per domande, dubbi o assistenza tecnica, contattaci:</string>
+    <string name="contact_email">progettoscreentime.dsspp@unito.it</string>
+    <string name="contact_button">Contattaci</string>
+    <string name="contact_anonymous_note">Contattandoci via email, il tuo indirizzo non sarà comunque mai collegato ai dati dello studio.</string>
+
+    <!-- Withdrawal -->
+    <string name="withdraw_title">Vuoi ritirarti dallo studio?</string>
+    <string name="withdraw_button">Ritirati dallo studio</string>
+    <string name="withdraw_dialog_title">Conferma ritiro</string>
+    <string name="withdraw_dialog_message">Stai per ritirarti dallo studio MIND TIME.\n\nQuesto comporterà:\n• La cancellazione di tutti i tuoi dati dai nostri server\n• L\'eliminazione dei dati locali dall\'app\n• L\'impossibilità di partecipare nuovamente\n\nSei sicuro/a di voler procedere?</string>
+    <string name="withdraw_confirm_step1">Continua</string>
+    <string name="withdraw_confirm_step2_title">Conferma finale</string>
+    <string name="withdraw_confirm_step2_message">Per confermare definitivamente il ritiro, digita RITIRO nel campo sottostante:</string>
+    <string name="withdraw_confirm_hint">Digita RITIRO</string>
+    <string name="withdraw_confirm_word">RITIRO</string>
+    <string name="withdraw_final_confirm">Conferma ritiro</string>
+    <string name="withdraw_success_title">Ritiro completato</string>
+    <string name="withdraw_success_message">I tuoi dati sono stati eliminati con successo.\n\nGrazie comunque per l\'interesse mostrato verso la nostra ricerca.</string>
+    <string name="withdraw_error">Errore durante il ritiro. Riprova o contattaci per assistenza.</string>
+    <string name="withdraw_cancelled">Ritiro annullato</string>
+    <string name="withdraw_wrong_word">Digita esattamente \"RITIRO\" per confermare</string>
+    <string name="withdraw_loading">Eliminazione in corso…</string>
+
+    <!-- Notification Permission Dialog -->
+    <string name="notification_permission_title">Notifiche disabilitate</string>
+    <string name="notification_permission_message">Le notifiche sono importanti per informarti sulla raccolta automatica dei dati in background.\n\nSenza notifiche, la raccolta continuerà ma non sarai informato del suo stato.\n\nVuoi abilitare le notifiche ora?</string>
+    <string name="enable_notifications">Abilita notifiche</string>
+    <string name="not_now">Non ora</string>
+    <string name="notification_permission_denied">Le notifiche sono disabilitate. Non riceverai avvisi durante la raccolta dati in background.</string>
+
+    <!-- Questionnaire Reminder Notifications -->
+    <string name="notification_initial_title">È il momento di MIND TIME</string>
+    <string name="notification_initial_message">5 minuti per il questionario, per la ricerca e la tua salute! Inizia ora!</string>
+    <string name="notification_forgot_title">5 minuti per il questionario…</string>
+    <string name="notification_forgot_message">Siamo sicuri che ti sia solo sfuggito! Il questionario ti sta aspettando.</string>
+    <string name="notification_completely_forgot_title">Tutto, ma non il ghosting.</string>
+    <string name="notification_completely_forgot_message">Il questionario è ancora disponibile, ma non per molto! Aiutaci a capire il nostro rapporto con i Social Media.</string>
+    <string name="notification_invite_title">E i tuoi colleghi?</string>
+    <string name="notification_invite_message">Conosci qualcuno che potrebbe partecipare allo studio? Condividi il link!</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_app_logo">Logo Studio MIND TIME</string>
+    <string name="a11y_progress_dot_completed">Completato</string>
+    <string name="a11y_progress_dot_current">Da completare</string>
+    <string name="a11y_progress_dot_future">In attesa</string>
+    <string name="a11y_status_granted">Permesso concesso</string>
+    <string name="a11y_status_denied">Permesso non concesso</string>
+    <string name="a11y_success_icon">Operazione completata</string>
+    <string name="a11y_error_icon">Errore</string>
+    <string name="a11y_usage_permission_status">Stato permesso statistiche di utilizzo</string>
+    <string name="a11y_notification_permission_status">Stato permesso notifiche</string>
+    <string name="a11y_battery_permission_status">Stato ottimizzazione batteria</string>
+    <string name="a11y_withdraw_dialog">Dialogo di conferma ritiro dallo studio</string>
+    <string name="a11y_loading">Caricamento in corso</string>
+    <string name="a11y_study_progress">Avanzamento studio: %1$d di 5 questionari completati</string>
+
+
+    <!-- Dialogs -->
+    <string name="exit_questionnaire_title">Sei sicuro di voler uscire ora?</string>
+    <string name="exit_questionnaire_message">Attenzione: se esci ora, tutte le risposte verranno perse e dovrai ricominciare da capo.</string>
+    <string name="exit_questionnaire_confirm">Esci</string>
+    <string name="exit_questionnaire_cancel">Continua</string>
+
+    <!-- Update -->
+    <string name="update_available_title">Aggiornamento disponibile</string>
+    <string name="update_available_message">È disponibile la versione %1$s dell\'app. Ti consigliamo di aggiornare per una migliore esperienza.</string>
+    <string name="update_download">Aggiorna</string>
+    <string name="update_later">Non ora</string>
+</resources>

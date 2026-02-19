@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_2xl">24dp</dimen>
+    <dimen name="spacing_3xl">32dp</dimen>
+
+    <!-- Card -->
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+
+    <!-- Progress indicator -->
+    <dimen name="progress_dot_size">16dp</dimen>
+    <dimen name="progress_track_height">3dp</dimen>
+    <dimen name="progress_label_text_size">11sp</dimen>
+
+    <!-- Questionnaire -->
+    <dimen name="scale_options_width">180dp</dimen>
+    <dimen name="question_number_size">24dp</dimen>
+    <dimen name="legend_number_size">28dp</dimen>
+
+    <!-- Buttons -->
+    <dimen name="button_height_primary">56dp</dimen>
+    <dimen name="button_height_secondary">48dp</dimen>
+    <dimen name="button_corner_radius">28dp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_size_large">80dp</dimen>
+    <dimen name="icon_size_medium">48dp</dimen>
+    <dimen name="icon_size_small">24dp</dimen>
+
+    <!-- Touch targets (accessibility minimum) -->
+    <dimen name="touch_target_min">48dp</dimen>
+</resources>
