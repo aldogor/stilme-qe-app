@@ -7,6 +7,10 @@
     <string name="continue_button">Continua</string>
     <string name="back_button">Indietro</string>
     <string name="close_button">Chiudi</string>
+    <string name="ok_button">OK</string>
+
+    <!-- Questionnaire UI -->
+    <string name="scale_responses_count">%1$d/%2$d risposte</string>
 
     <!-- Welcome Screen -->
     <string name="welcome_title">Studio MIND TIME</string>
@@ -25,6 +29,7 @@
     <string name="consent_full_text">Gli Screen Time Limits contribuiscono a ridurre l\'uso dei social media e a migliorare la salute mentale? Uno studio quasi-sperimentale\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nFOGLIO INFORMATIVO\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nGentilissimo/a,\n\ncon la presente informativa ti viene proposta la possibilità di partecipare a uno studio promosso dalla Scuola di Specializzazione in Igiene e Medicina Preventiva dell\'Università di Torino. II progetto di ricerca ha come obiettivo quello di indagare la prevalenza della Social Media Addiction (SMA) in una popolazione di soggetti di età compresa tra i 18 e i 30 anni. Inoltre, verrà indagata l\'associazione della SMA con lo stato di salute mentale, valutato attraverso scale validate che indagano l\'ansia, la depressione, lo stress e la Fear of Missing Out (FOMO). Infine, il progetto di ricerca si propone di valutare l\'efficacia dell\'impiego degli \"Screen Time Limits\" (STL) nel ridurre lo screen time, ovvero il tempo passato davanti allo schermo del proprio dispositivo, e nel migliorare i sintomi da SMA e lo stato di salute mentale (ansia, depressione, stress, FOMO).\n\nLa Social Media Addiction può essere definita come un utilizzo compulsivo dei Social Media (SM), tale da disturbare significativamente il funzionamento dell\'utente in aree importanti della vita, quali le relazioni interpersonali, la performance lavorativa o accademica e la salute fisica.\n\nNumerosi studi hanno rivelato una possibile correlazione tra dipendenza da Social Media e un peggioramento della salute mentale, di conseguenza risulta evidente la necessità di approfondire questa correlazione e individuare possibili strumenti efficaci nel limitare gli effetti negativi dei social media.\n\nGli Screen Time Limits sono degli strumenti utili a ridurre il tempo trascorso sul proprio device mobile. Essi sono già integrati e presenti di default nei sistemi operativi iOS di Apple e Android di Alphabet.\n\nLa tua adesione è totalmente libera e i dati saranno trattati in forma pseudonimizzata. Lo studio non prevede nessun esame clinico o strumentale, ma solo la compilazione di questionari e la condivisione di alcuni dati pseudonimizzati presenti sul tuo device mobile, tramite un\'applicazione creata appositamente, ed esclusivamente nel caso in cui accettassi di partecipare allo studio.\n\nIn particolare, ti verrà richiesto di compilare una serie di questionari che esplorano il tuo uso dei social media, il tuo stato emotivo e altri aspetti del tuo comportamento. Tutti i questionari sono pseudonimizzati mediante un codice alfanumerico casuale generato localmente dal tuo dispositivo e le modalità di raccolta non permettono, neppure indirettamente, l\'identificazione dell\'interessato da parte dei ricercatori o di terzi. Ti verrà presentato un questionario da compilare una sola volta all\'inizio dello studio, e successivamente ti verrà proposto un questionario più breve una volta al mese, per un periodo di 4 mesi.\n\nInoltre, ti verrà richiesta l\'autorizzazione ad estrarre dei dati sui tempi di utilizzo del tuo device mobile: con il tuo consenso verranno estratti, in modalità pseudonimizzata e sicura, i dati relativi al tempo trascorso sulle applicazioni di social media presenti sul tuo dispositivo. In particolare, le applicazioni prese in considerazione sono le seguenti: Instagram, TikTok, Facebook, Youtube, Pinterest, Twitch, BeReal, SnapChat, X (ex \"Twitter\"), Linkedin, Reddit.\n\nNello specifico saranno raccolte le seguenti informazioni:\n• tempi di utilizzo delle app sul device\n• numero di volte che le app vengono aperte nell\'arco di 24 ore\n\nI dati sono estrapolati dallo strumento nativo Android, denominato Digital Wellbeing, che analizza già sul tuo dispositivo l\'attività relativa ai 30 giorni precedenti alla consultazione. I dati verranno utilizzati per misurare eventuali cambiamenti del tempo trascorso sulle Social Media App e non sono in ogni caso riconducibili alla tua persona.\n\nL\'invio dei dati avverrà 1 volta ogni 30 giorni, per un periodo di 4 mesi e sarà necessario il tuo coinvolgimento attivo per effettuare l\'invio dei dati che ci permette di svolgere la ricerca.\n\nTutti i partecipanti dovranno scaricare l\'applicazione \"MIND TIME\", associata al software REDCap di Ateneo con cui risponderanno alle domande di un questionario iniziale.\n\nL\'ultima sezione di ogni questionario richiederà ai partecipanti il consenso ad inviare i dati relativi ai tempi di utilizzo dell App di Social Media, estratti dalla sezione Digital Wellbeing dei device Android.\n\nAl termine del questionario, ai partecipanti verrà chiesto di dichiarare se sono interessati o meno a ridurre il loro uso dei social media. In caso di risposta affermativa, dovranno scegliere se utilizzare o meno gli Screen Time Limits per ridurre il proprio uso dei social media.\n\nSulla base delle preferenze espresse a partire da queste domande i partecipanti verranno distribuiti in tre gruppi, composti come segue:\n\n• gruppo 1: coloro che non sono interessati a cambiare il tempo trascorso sui social media (gruppo di controllo). Essi verranno seguiti per i successivi 4 mesi e fino al termine dello studio come gruppo di controllo;\n\n• gruppo 2: coloro che vogliono ridurre l\'uso dei SM utilizzando strumenti di STL. I partecipanti facenti parte di questo gruppo dovranno attivare il limite giornaliero di 30 minuti, tramite gli strumenti già presenti nel proprio device, per le app di social media precedentemente elencate. Essi verranno seguiti per i successivi 4 mesi e rappresenteranno il gruppo sperimentale d\'interesse;\n\n• gruppo 3: coloro che vogliono ridurre l\'uso solo con impegno personale, senza l\'ausilio degli STL. I partecipanti di questo gruppo non dovranno attivare gli STL nel proprio device, né dovranno utilizzare altri strumenti di app esterne. Anch\'essi verranno seguiti per i successivi 4 mesi come ulteriore gruppo sperimentale.\n\nAi partecipanti di tutti i gruppi, sarà quindi chiesto di rispondere ad un questionario mensile, più breve di quello iniziale, 1 volta al mese per 4 mesi. Al fondo di ogni questionario, dovranno allegare i dati aggiornati scaricati sul file .csv tramite l\'app prodotta dal gruppo di ricerca, come spiegato sopra.\n\nPertanto, a tutti i gruppi verranno proposti un totale di 5 questionari: un questionario al tempo zero (quando si scarica l\'app) e un questionario ogni mese, più breve del primo, per un massimo di quattro mesi. Inoltre, per tutti i gruppi verranno scaricati i tempi di utilizzo previo consenso come descritto sopra. Soltanto il gruppo 2 invece dovrà ridurre l\'uso dei SM tramite strumenti già presenti nel proprio device, come spiegato nell\'app.\n\nLa durata di compilazione del primo questionario è di circa 8 minuti. Non è previsto nessun costo a tuo carico.\n\nAlcuni partecipanti allo studio potrebbero fare esperienza di sintomi da craving o da astinenza da Social Media: si ricorda che per necessità è disponibile Lo Spazio di Ascolto dell\'Università di Torino, un servizio gratuito rivolto a studenti e studentesse dell\'Università di Torino che vivono situazioni di disagio o di malessere psico-fisico.\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nTRATTAMENTO DEI DATI PERSONALI\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nIn nessun momento nel questionario ti verrà chiesto il nominativo o l\'indirizzo mail, né questi possono essere registrati in alcun modo.\n\nSoltanto i soggetti autorizzati al trattamento dei dati potranno accedere ai dati ed elaborarli.\n\nI dati raccolti saranno utilizzati esclusivamente ai fini dello svolgimento del presente studio, nel rispetto delle normative vigenti, e non saranno comunicati ad alcun ente o soggetto esterno. I dati saranno analizzati in forma totalmente anonima e aggregata ed eventualmente inseriti in pubblicazioni. In qualsiasi momento sarà possibile contattare i ricercatori coinvolti nel progetto, per domande riguardo alla ricerca o notizie sui risultati che saranno pubblicati.\n\nL\'informativa completa sul trattamento dei dati personali ai sensi degli artt. 13 e 14 del Regolamento 2016/679/UE, è disponibile al seguente link.\n\n\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\nCONSENSO INFORMATO\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nAcconsentendo alla partecipazione allo studio, si dichiara di aver preso visione e di accettare l\'informativa.\n\nNella fattispecie, selezionando Acconsento:\n\n• Acconsento liberamente e volontariamente a partecipare allo studio;\n• Dichiaro di aver preso visione e compreso l\'informativa al trattamento dei dati personali;\n• Dichiaro di prestare il mio consenso al trattamento dei miei dati personali per le finalità e con le modalità descritte nell\'informativa;\n• Dichiaro di essere stato informato/a nell\'informativa precedente sull\'assenza di rischi correlati allo studio;\n• Ho compreso i miei diritti durante la partecipazione allo studio e sono consapevole di potermi ritirare in qualunque momento senza dover fornire spiegazioni;\n• Dichiaro di aver avuto a disposizione tempo sufficiente per poter leggere attentamente e comprendere il contenuto della precedente scheda informativa;\n• Dichiaro di aver avuto la possibilità di conservare il foglio informativo precedente e il presente consenso scaricandoli dal seguente link.\n• Sono consapevole che per ogni problema o per eventuali ulteriori informazioni potrò rivolgermi ai Responsabili del Progetto attraverso l\'email progettoscreentime.dsspp@unito.it.</string>
     <string name="consent_link_privacy_info">seguente link</string>
     <string name="consent_link_download_docs">seguente link</string>
+    <string name="consent_link_privacy_policy">informativa sulla privacy</string>
     <string name="consent_privacy_info_url">https://drive.google.com/file/d/1QNKl_yjExDtf7TTA7ZDu-sDF55g93tdR/view?usp=sharing</string>
     <string name="consent_download_docs_url">https://drive.google.com/file/d/1UYAes5dcajMgq-x62abvQNnglszgFi1P/view?usp=sharing</string>
     <!-- Consent Yes/No Questions -->
@@ -73,7 +78,7 @@
     <string name="validation_missing_required">Rispondi a tutte le domande obbligatorie per continuare</string>
 
     <!-- Group Instructions Screen - Control Group (Group 1) -->
-    <string name="group_control_title">Limita il tuo uso dei social media</string>
+    <string name="group_control_title">Continua così</string>
     <string name="group_control_subtitle">Sei stato/a assegnato/a al gruppo che ci aiuterà a capire come cambia l\'uso dei social nel tempo: dovrai solo compilare i questionari.</string>
     <string name="group_control_instructions_title">Per i prossimi 4 mesi dovrai:</string>
     <string name="group_control_instructions">• Compilare 1 questionario al mese\n• NON utilizzare sistemi che limitano il tempo di utilizzo dei tuoi Social Media</string>
@@ -93,7 +98,7 @@
     <string name="group_stl_pdf_url">https://drive.google.com/file/d/1fmxs1yXNZ0w4dWmZ5GziaZR5NKYGTR4Q/view?usp=sharing</string>
 
     <!-- Group Instructions Screen - Personal Commitment Group (Group 3) -->
-    <string name="group_commitment_title">Continua così</string>
+    <string name="group_commitment_title">Limita il tuo uso dei social media</string>
     <string name="group_commitment_subtitle">Sei stato/a assegnato/a al gruppo che prova a ridurre il tempo sui Social Media senza usare strumenti, che ci aiuterà a capire cosa succede quando cerchiamo di cambiare il nostro utilizzo solo con la forza di volontà.</string>
     <string name="group_commitment_instructions_title">Nei prossimi 4 mesi dovrai:</string>
     <string name="group_commitment_instructions">• Provare a ridurre il tuo uso dei social solo con la tua forza di volontà, senza usare altri strumenti. Cerca di non utilizzarli per più di 30 minuti al giorno, senza aiuti esterni.\n• NON impostare sistemi che limitano il tempo di utilizzo dei tuoi Social Media.\n• Compilare 1 questionario al mese</string>
@@ -160,6 +165,7 @@
     <string name="debug_reset_button">Reset data</string>
     <string name="debug_test_notification">Test notifica</string>
     <string name="debug_notification_triggered">Controllo notifiche attivato</string>
+    <string name="debug_invalid_number">Inserisci un numero valido</string>
 
     <!-- Data extraction confirmation -->
     <string name="confirm_data_extraction_title">Conferma invio dati</string>
@@ -209,6 +215,17 @@
     <string name="not_now">Non ora</string>
     <string name="notification_permission_denied">Le notifiche sono disabilitate. Non riceverai avvisi durante la raccolta dati in background.</string>
 
+    <!-- Notification Channels and Content -->
+    <string name="notification_channel_collection_name">Raccolta Dati</string>
+    <string name="notification_channel_collection_description">Notifiche sulla raccolta automatica dei dati di utilizzo</string>
+    <string name="notification_channel_questionnaire_name">Promemoria Questionari</string>
+    <string name="notification_channel_questionnaire_description">Promemoria per completare i questionari mensili dello studio</string>
+    <string name="notification_title">Studio MIND TIME</string>
+    <string name="notification_text_collecting">Raccolta dati di utilizzo in corso. I dati rimangono sul tuo dispositivo.</string>
+    <string name="notification_text_complete">Raccolta dati completata. I dati sono salvati in modo sicuro sul tuo dispositivo.</string>
+    <string name="notification_text_error">Errore durante la raccolta dati. Riproveremo più tardi.</string>
+    <string name="notification_text_background_started">La raccolta automatica dei dati è stata programmata con successo</string>
+
     <!-- Questionnaire Reminder Notifications -->
     <string name="notification_initial_title">È il momento di MIND TIME</string>
     <string name="notification_initial_message">5 minuti per il questionario, per la ricerca e la tua salute! Inizia ora!</string>
@@ -241,6 +258,17 @@
     <string name="exit_questionnaire_message">Attenzione: se esci ora, tutte le risposte verranno perse e dovrai ricominciare da capo.</string>
     <string name="exit_questionnaire_confirm">Esci</string>
     <string name="exit_questionnaire_cancel">Continua</string>
+
+    <!-- Share / Invite -->
+    <string name="share_study_text">Partecipa allo studio MIND TIME dell\'Università di Torino! %1$s</string>
+
+    <!-- Email -->
+    <string name="email_subject">STILME-QE - Richiesta di assistenza</string>
+    <string name="email_chooser_title">Invia email</string>
+    <string name="email_copied_to_clipboard">Indirizzo email copiato negli appunti</string>
+
+    <!-- Offline submission note -->
+    <string name="submission_offline_note">(I dati saranno sincronizzati quando tornerai online.)</string>
 
     <!-- Update -->
     <string name="update_available_title">Aggiornamento disponibile</string>

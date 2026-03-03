@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.questionnaire_submission_success))
                     .setMessage(getString(R.string.questionnaire_see_you_next_month))
-                    .setPositiveButton("OK") { dialog, _ ->
+                    .setPositiveButton(getString(R.string.ok_button)) { dialog, _ ->
                         dialog.dismiss()
                         updateStudyStatus()
                         updateQuestionnaireCard()
@@ -159,14 +159,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         ensureStudyIdGenerated()
+        updateIneligibleVisibility()
 
-        if (permissionHelper.hasUsageStatsPermission()) {
+        if (studyManager.isEligible() && permissionHelper.hasUsageStatsPermission()) {
             ensureBackgroundWorkScheduled()
             scheduleQuestionnaireReminders()
             scheduleSyncWorker()
         }
 
-        if (permissionHelper.needsNotificationPermission()) {
+        if (studyManager.isEligible() && permissionHelper.needsNotificationPermission()) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
@@ -257,7 +258,7 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
                 jumpDays(days)
             } else {
-                Toast.makeText(this, "Inserisci un numero valido", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.debug_invalid_number), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -321,9 +322,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Check if mandatory permissions are still granted
-        if (!permissionHelper.hasMandatoryPermissions()) {
-            // Redirect to permission recovery screen
+        // Check if mandatory permissions are still granted (eligible participants only)
+        if (studyManager.isEligible() && !permissionHelper.hasMandatoryPermissions()) {
             startActivity(Intent(this, PermissionRecoveryActivity::class.java))
             return
         }
@@ -332,7 +332,7 @@ class MainActivity : AppCompatActivity() {
         updateQuestionnaireCard()
         updateProgressIndicator()
 
-        if (permissionHelper.hasUsageStatsPermission()) {
+        if (studyManager.isEligible() && permissionHelper.hasUsageStatsPermission()) {
             ensureBackgroundWorkScheduled()
         }
 
@@ -354,11 +354,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestionnaireCard() {
-        if (studyManager.isQuestionnaireDue()) {
+        if (studyManager.isEligible() && studyManager.isQuestionnaireDue()) {
             binding.cardQuestionnaire.visibility = View.VISIBLE
         } else {
             binding.cardQuestionnaire.visibility = View.GONE
         }
+    }
+
+    /**
+     * Hides study-related UI elements for ineligible participants.
+     * Ineligible users still see the status card (with "Non idoneo" message),
+     * contact info, and withdrawal option, but not progress, group instructions,
+     * or invite cards.
+     */
+    private fun updateIneligibleVisibility() {
+        val eligible = studyManager.isEligible()
+        val ineligibleGone = if (eligible) View.VISIBLE else View.GONE
+
+        binding.progressContainer.visibility = ineligibleGone
+        binding.cardGroupInstructions.visibility = ineligibleGone
+        binding.cardInvite.visibility = ineligibleGone
+        binding.textInfoNote.visibility = ineligibleGone
     }
 
     private fun ensureBackgroundWorkScheduled() {
@@ -397,40 +413,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "Error generating study ID", e)
             }
         }
-    }
-
-    private fun checkNotificationPermissions() {
-        if (!permissionHelper.areNotificationsEnabled()) {
-            val prefs = getSharedPreferences("stilme_qe_prefs", MODE_PRIVATE)
-            val lastPrompt = prefs.getLong("last_notification_prompt", 0)
-
-            if (System.currentTimeMillis() - lastPrompt > 24 * 60 * 60 * 1000) {
-                showNotificationDialog()
-                prefs.edit {
-                    putLong("last_notification_prompt", System.currentTimeMillis())
-                }
-            }
-        }
-    }
-
-    private fun showNotificationDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(getString(R.string.notification_permission_title))
-            .setMessage(getString(R.string.notification_permission_message))
-            .setPositiveButton(getString(R.string.enable_notifications)) { _, _ ->
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                        NOTIFICATION_PERMISSION_REQUEST_CODE
-                    )
-                } else {
-                    startActivity(permissionHelper.getNotificationSettingsIntent())
-                }
-            }
-            .setNegativeButton(getString(R.string.not_now), null)
-            .setCancelable(false)
-            .show()
     }
 
     override fun onRequestPermissionsResult(
@@ -527,7 +509,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun shareStudyLink() {
         val shareUrl = getString(R.string.welcome_info_url)
-        val shareText = "Partecipa allo studio MIND TIME dell'Università di Torino! $shareUrl"
+        val shareText = getString(R.string.share_study_text, shareUrl)
 
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -571,16 +553,16 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = android.net.Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.contact_email)))
-            putExtra(Intent.EXTRA_SUBJECT, "STILME-QE - Richiesta di assistenza")
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject))
         }
         try {
-            startActivity(Intent.createChooser(intent, "Invia email"))
+            startActivity(Intent.createChooser(intent, getString(R.string.email_chooser_title)))
         } catch (e: Exception) {
             // If no email client available, copy email to clipboard
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Email", getString(R.string.contact_email))
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, "Indirizzo email copiato negli appunti", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.email_copied_to_clipboard), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -677,7 +659,7 @@ class MainActivity : AppCompatActivity() {
                 MaterialAlertDialogBuilder(this@MainActivity)
                     .setTitle(getString(R.string.withdraw_success_title))
                     .setMessage(getString(R.string.withdraw_success_message))
-                    .setPositiveButton("OK") { _, _ ->
+                    .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
                         finishAffinity()
                     }
                     .setCancelable(false)

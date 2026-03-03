@@ -54,7 +54,7 @@ class StudyManager(context: Context) {
     }
 
     fun isEligible(): Boolean {
-        return getParticipantState()?.isEligible != false
+        return getParticipantState()?.isEligible == true
     }
 
     // ========================================================================
@@ -140,7 +140,7 @@ class StudyManager(context: Context) {
     }
 
     fun isQuestionnaireDue(): Boolean {
-        val state = getParticipantState() ?: return true // No state = baseline due
+        val state = getParticipantState() ?: return false // No state = not yet onboarded
 
         if (state.isStudyComplete) return false
         if (!state.isEligible) return false

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.aldogor.stilme_qe_app.R
 import com.aldogor.stilme_qe_app.databinding.FragmentIneligibleBinding
 
 /**
@@ -27,11 +28,12 @@ class IneligibleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val reason = arguments?.getString(ARG_REASON) ?: "Non soddisfi i criteri di inclusione."
+        val reason = arguments?.getString(ARG_REASON) ?: getString(R.string.ineligible_default_reason)
         binding.textReason.text = reason
 
         binding.buttonClose.setOnClickListener {
-            activity?.finish()
+            (activity as? OnboardingNavigator)?.finishOnboarding()
+                ?: activity?.finish()
         }
     }
 

@@ -22,8 +22,8 @@ android {
         applicationId = "com.aldogor.stilme_qe_app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "2.0"
+        versionCode = 2
+        versionName = "2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

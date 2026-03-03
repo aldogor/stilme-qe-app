@@ -499,7 +499,7 @@ class QuestionAdapter(
         private fun updateCompletionIndicator(item: DisplayItem.ScaleGroup) {
             val answered = item.questions.count { isQuestionAnswered(it) }
             val total = item.questions.size
-            binding.textCompletion.text = "$answered/$total risposte"
+            binding.textCompletion.text = binding.root.context.getString(R.string.scale_responses_count, answered, total)
 
             // Change color based on completion
             val color = when {

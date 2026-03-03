@@ -173,7 +173,7 @@ class ConsentFragment : Fragment() {
      */
     private fun setupPrivacyQuestionLink() {
         val fullText = getString(R.string.consent_question_privacy)
-        val linkText = "informativa sulla privacy"
+        val linkText = getString(R.string.consent_link_privacy_policy)
 
         val startIndex = fullText.indexOf(linkText)
         if (startIndex == -1) {

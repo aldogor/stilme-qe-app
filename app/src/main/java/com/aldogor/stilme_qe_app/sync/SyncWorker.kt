@@ -100,11 +100,12 @@ class SyncWorker(
 
         Log.d(TAG, "Found ${pending.size} pending submissions")
 
-        var allSuccess = true
+        var hasNetworkError = false
 
         for (submission in pending) {
             if (submission.retryCount >= MAX_RETRIES) {
-                Log.w(TAG, "Submission ${submission.id} exceeded max retries, skipping")
+                Log.w(TAG, "Submission ${submission.id} exceeded max retries, removing from queue")
+                submissionRepository.delete(submission)
                 continue
             }
 
@@ -120,24 +121,20 @@ class SyncWorker(
                 is RedcapResult.NetworkError -> {
                     Log.w(TAG, "Network error for submission ${submission.id}: ${result.message}")
                     submissionRepository.markFailed(submission.id, result.message)
-                    allSuccess = false
-                    // Return retry for network errors
-                    return Result.retry()
+                    hasNetworkError = true
                 }
                 is RedcapResult.ServerError -> {
                     Log.e(TAG, "Server error for submission ${submission.id}: ${result.code} - ${result.message}")
                     submissionRepository.markFailed(submission.id, "Server error: ${result.code}")
-                    allSuccess = false
                 }
                 is RedcapResult.ParseError -> {
                     Log.e(TAG, "Parse error for submission ${submission.id}: ${result.message}")
                     submissionRepository.markFailed(submission.id, result.message)
-                    allSuccess = false
                 }
             }
         }
 
-        return if (allSuccess) Result.success() else Result.retry()
+        return if (hasNetworkError) Result.retry() else Result.success()
     }
 }
 
@@ -166,7 +163,7 @@ class QuestionnaireReminderWorker(
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
-                ExistingPeriodicWorkPolicy.UPDATE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 request
             )
 

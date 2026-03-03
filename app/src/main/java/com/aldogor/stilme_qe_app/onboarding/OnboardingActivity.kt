@@ -104,12 +104,13 @@ class OnboardingActivity : AppCompatActivity(), OnboardingNavigator {
     private fun setupBackPressHandler() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (supportFragmentManager.backStackEntryCount > 1) {
-                    supportFragmentManager.popBackStack()
-                } else {
-                    // At first screen, just finish
+                // Only allow back on the Welcome screen (first fragment).
+                // All subsequent steps (Consent, Permission, Questionnaire,
+                // GroupInstructions, Ineligible) are forward-only.
+                if (supportFragmentManager.backStackEntryCount <= 1) {
                     finish()
                 }
+                // else: consume the back press (do nothing)
             }
         })
     }

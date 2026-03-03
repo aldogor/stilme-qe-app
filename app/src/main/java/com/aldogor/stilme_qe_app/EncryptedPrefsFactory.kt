@@ -50,14 +50,21 @@ object EncryptedPrefsFactory {
                 Log.w(TAG, "Deleted corrupted prefs file: ${prefsFile.name}")
             }
 
-            // Retry creation with a fresh file
-            EncryptedSharedPreferences.create(
-                context,
-                fileName,
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
+            // Retry creation with a fresh file; fall back to unencrypted prefs
+            // if the keystore is irrecoverably broken to prevent crash loops
+            try {
+                EncryptedSharedPreferences.create(
+                    context,
+                    fileName,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
+            } catch (e2: GeneralSecurityException) {
+                Log.e(TAG, "Retry also failed for '$fileName'. " +
+                        "Falling back to unencrypted prefs to prevent crash loop.", e2)
+                context.getSharedPreferences("${fileName}_fallback", Context.MODE_PRIVATE)
+            }
         }
     }
 }

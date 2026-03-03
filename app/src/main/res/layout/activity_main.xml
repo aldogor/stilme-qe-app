@@ -98,6 +98,7 @@
 
                     <!-- Data collection info note -->
                     <TextView
+                        android:id="@+id/text_info_note"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

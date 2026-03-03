@@ -162,7 +162,7 @@ Add to `AppConfig.MONITORED_APPS` in `Models.kt`:
 1. Edit `consent_full_text` in `res/values/strings.xml`
 2. If link positions change, verify `ConsentFragment.setupConsentLinks()` finds "seguente link" texts
 3. Update URLs if needed: `consent_privacy_info_url`, `consent_download_docs_url`
-4. The privacy question has a clickable "informativa sulla privacy" — if changed, update `setupPrivacyQuestionLink()` in `ConsentFragment.kt`
+4. The privacy question has a clickable link text defined by `consent_link_privacy_policy` in `strings.xml` — if changed, update both the string resource and `consent_question_privacy` to match
 
 ---
 
@@ -176,14 +176,28 @@ All encrypted prefs use `EncryptedPrefsFactory.create()` which wraps `EncryptedS
 private val prefs = EncryptedPrefsFactory.create(context, PREFS_FILE_NAME)
 ```
 
+**Recovery chain**: First attempt → catch `GeneralSecurityException` → delete corrupted file → retry → if retry also fails → fall back to unencrypted `SharedPreferences` (`{fileName}_fallback`) to prevent crash loops.
+
 Three encrypted prefs files exist:
 - `stilme_qe_encrypted_prefs` (DataStorage) — usage data, study ID
 - `stilme_study_state` (StudyManager) — participant state, timepoints
 - `stilme_secure_tokens` (SecureTokenManager) — API token override
 
+### Null-Safety Convention for Study State
+
+`StudyManager` boolean accessors use `== true` (not `!= false`) so that a null `ParticipantState` returns `false`:
+- `isEligible()` → `false` when no state exists
+- `isQuestionnaireDue()` → `false` when no state exists
+- `hasCompletedOnboarding()` → `false` when no state exists
+- `isStudyComplete()` → `false` when no state exists
+
+This prevents showing study UI to users who haven't completed onboarding yet.
+
 ### REDCap Submission
 
 Uses `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `ParseError`). Failed submissions are queued in Room (`SubmissionQueue`) and retried by `SyncWorker`.
+
+**SyncWorker behavior**: Processes all pending submissions in a single run (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are deleted from the queue. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` are considered final failures (retried on next periodic run but don't request immediate WorkManager retry).
 
 ---
 

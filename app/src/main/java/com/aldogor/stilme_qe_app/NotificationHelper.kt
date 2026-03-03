@@ -19,16 +19,9 @@ class NotificationHelper(private val context: Context) {
     companion object {
         private const val TAG = "NotificationHelper"
 
-        // Notification channel constants - separate channels for different purposes
+        // Notification channel IDs
         private const val CHANNEL_COLLECTION_ID = "usage_data_collection"
-        private const val CHANNEL_COLLECTION_NAME = "Raccolta Dati"
-        private const val CHANNEL_COLLECTION_DESCRIPTION =
-            "Notifiche sulla raccolta automatica dei dati di utilizzo"
-
         private const val CHANNEL_QUESTIONNAIRE_ID = "questionnaire_reminders"
-        private const val CHANNEL_QUESTIONNAIRE_NAME = "Promemoria Questionari"
-        private const val CHANNEL_QUESTIONNAIRE_DESCRIPTION =
-            "Promemoria per completare i questionari mensili dello studio"
 
         // Notification IDs
         const val COLLECTION_NOTIFICATION_ID = 1001
@@ -36,17 +29,6 @@ class NotificationHelper(private val context: Context) {
         const val BACKGROUND_STARTED_ID = 1003
         const val QUESTIONNAIRE_REMINDER_ID = 1004
         const val INVITE_FRIEND_ID = 1005
-
-        // Notification content
-        private const val NOTIFICATION_TITLE = "Studio MIND TIME"
-        private const val NOTIFICATION_TEXT_COLLECTING =
-            "Raccolta dati di utilizzo in corso. I dati rimangono sul tuo dispositivo."
-        private const val NOTIFICATION_TEXT_COMPLETE =
-            "Raccolta dati completata. I dati sono salvati in modo sicuro sul tuo dispositivo."
-        private const val NOTIFICATION_TEXT_ERROR =
-            "Errore durante la raccolta dati. Riproveremo più tardi."
-        private const val NOTIFICATION_TEXT_BACKGROUND_STARTED =
-            "La raccolta automatica dei dati è stata programmata con successo"
     }
     
     private val notificationManager: NotificationManagerCompat by lazy {
@@ -67,10 +49,10 @@ class NotificationHelper(private val context: Context) {
         // Channel for data collection notifications (low priority, silent)
         val collectionChannel = NotificationChannel(
             CHANNEL_COLLECTION_ID,
-            CHANNEL_COLLECTION_NAME,
+            context.getString(R.string.notification_channel_collection_name),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = CHANNEL_COLLECTION_DESCRIPTION
+            description = context.getString(R.string.notification_channel_collection_description)
             setShowBadge(false)
             enableLights(false)
             enableVibration(false)
@@ -80,10 +62,10 @@ class NotificationHelper(private val context: Context) {
         // Channel for questionnaire reminders (default priority, can alert)
         val questionnaireChannel = NotificationChannel(
             CHANNEL_QUESTIONNAIRE_ID,
-            CHANNEL_QUESTIONNAIRE_NAME,
+            context.getString(R.string.notification_channel_questionnaire_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = CHANNEL_QUESTIONNAIRE_DESCRIPTION
+            description = context.getString(R.string.notification_channel_questionnaire_description)
             setShowBadge(true)
             enableLights(true)
             enableVibration(true)
@@ -115,10 +97,10 @@ class NotificationHelper(private val context: Context) {
         
         val notification = NotificationCompat.Builder(context, CHANNEL_COLLECTION_ID)
             .setSmallIcon(android.R.drawable.ic_menu_info_details) // Using system icon
-            .setContentTitle(NOTIFICATION_TITLE)
-            .setContentText(NOTIFICATION_TEXT_COLLECTING)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentText(context.getString(R.string.notification_text_collecting))
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(NOTIFICATION_TEXT_COLLECTING))
+                .bigText(context.getString(R.string.notification_text_collecting)))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
             .setOngoing(true) // Cannot be dismissed by user
@@ -158,10 +140,10 @@ class NotificationHelper(private val context: Context) {
         
         val notification = NotificationCompat.Builder(context, CHANNEL_COLLECTION_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle(NOTIFICATION_TITLE)
-            .setContentText(NOTIFICATION_TEXT_COMPLETE)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentText(context.getString(R.string.notification_text_complete))
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(NOTIFICATION_TEXT_COMPLETE))
+                .bigText(context.getString(R.string.notification_text_complete)))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true) // Dismiss when tapped
@@ -199,10 +181,10 @@ class NotificationHelper(private val context: Context) {
         
         val notification = NotificationCompat.Builder(context, CHANNEL_COLLECTION_ID)
             .setSmallIcon(android.R.drawable.stat_notify_error)
-            .setContentTitle(NOTIFICATION_TITLE)
-            .setContentText(NOTIFICATION_TEXT_ERROR)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentText(context.getString(R.string.notification_text_error))
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(NOTIFICATION_TEXT_ERROR))
+                .bigText(context.getString(R.string.notification_text_error)))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Slightly higher for errors
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -265,10 +247,10 @@ class NotificationHelper(private val context: Context) {
         
         val notification = NotificationCompat.Builder(context, CHANNEL_COLLECTION_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle(NOTIFICATION_TITLE)
-            .setContentText(NOTIFICATION_TEXT_BACKGROUND_STARTED)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setContentText(context.getString(R.string.notification_text_background_started))
             .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(NOTIFICATION_TEXT_BACKGROUND_STARTED))
+                .bigText(context.getString(R.string.notification_text_background_started)))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT) // Default priority - appears in drawer
             .setContentIntent(pendingIntent)
             .setAutoCancel(true) // Dismissible by user
@@ -344,19 +326,12 @@ class NotificationHelper(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Higher priority for urgent reminders (day 10+)
-        val priority = if (reminderType == ReminderType.COMPLETELY_FORGOT) {
-            NotificationCompat.PRIORITY_HIGH
-        } else {
-            NotificationCompat.PRIORITY_DEFAULT
-        }
-
         val notification = NotificationCompat.Builder(context, CHANNEL_QUESTIONNAIRE_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(priority)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setOngoing(true) // Cannot be dismissed by user
             .setAutoCancel(false)

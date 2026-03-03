@@ -251,6 +251,8 @@ class DataStorage(private val context: Context) {
             encryptedPrefs.edit {
                 remove(KEY_USAGE_DATA)
                 remove(KEY_LAST_SYNC)
+                remove(KEY_LAST_BACKGROUND_SYNC)
+                remove(KEY_STUDY_ID)
             }
             Log.d(TAG, "All data cleared")
         } catch (e: Exception) {

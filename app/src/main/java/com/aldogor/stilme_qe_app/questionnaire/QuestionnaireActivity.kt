@@ -180,7 +180,7 @@ class QuestionnaireActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
                 studyManager.setEligibility(false)
                 studyManager.setGroup(StudyGroup.INELIGIBLE_SCREENING.code)
                 val resultIntent = android.content.Intent().apply {
@@ -315,7 +315,7 @@ class QuestionnaireActivity : AppCompatActivity() {
         }
 
         val finalMessage = if (offlineNote) {
-            "$message\n\n(I dati saranno sincronizzati quando tornerai online.)"
+            "$message\n\n${getString(R.string.submission_offline_note)}"
         } else {
             message
         }
@@ -323,7 +323,7 @@ class QuestionnaireActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(title)
             .setMessage(finalMessage)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
                 setResult(RESULT_OK)
                 finish()
             }
