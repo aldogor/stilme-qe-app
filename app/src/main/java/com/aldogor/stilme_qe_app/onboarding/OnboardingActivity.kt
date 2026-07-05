@@ -95,7 +95,18 @@ class OnboardingActivity : AppCompatActivity(), OnboardingNavigator {
         studyManager.getOrCreateStudyId()
 
         if (savedInstanceState == null) {
-            navigateToWelcome()
+            // If user was already screened as ineligible (e.g. app killed before
+            // tapping Close), go straight to the ineligible screen
+            val state = studyManager.getParticipantState()
+            if (state != null && !state.isEligible) {
+                val message = when (studyManager.getGroup()) {
+                    StudyGroup.INELIGIBLE_USING_STL.code -> getString(R.string.ineligible_reason_using_stl)
+                    else -> getString(R.string.ineligible_default_reason)
+                }
+                navigateToIneligible(message)
+            } else {
+                navigateToWelcome()
+            }
         }
 
         setupBackPressHandler()
