@@ -385,7 +385,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun ensureBackgroundWorkScheduled() {
-        lifecycleScope.launch {
+        // Runs on IO: isWeeklyCollectionScheduled() blocks on a WorkManager future (.get()), which
+        // must not happen on the main thread (jank/ANR on slow storage, especially at cold start).
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 if (!BackgroundScheduler.isWeeklyCollectionScheduled(this@MainActivity)) {
                     BackgroundScheduler.scheduleWeeklyCollection(this@MainActivity)

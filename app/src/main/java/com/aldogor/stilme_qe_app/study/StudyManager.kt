@@ -20,6 +20,13 @@ class StudyManager(context: Context) {
         private const val KEY_PARTICIPANT_STATE = "participant_state"
         private const val KEY_DEBUG_DAY_OFFSET = "debug_day_offset"
         private const val KEY_INVITE_SHOWN_FOR_TIMEPOINT = "invite_shown_for_timepoint"
+
+        // Process-wide lock serializing read-copy-write on the participant state. StudyManager is
+        // instantiated in several places (activities + WorkManager workers) that all share the same
+        // backing prefs file, so mutations must serialize or a worker can clobber a concurrent
+        // write (e.g. overwrite a just-completed timepoint). Being in the companion makes the lock
+        // shared across every StudyManager instance in the process.
+        private val STATE_LOCK = Any()
     }
 
     private val prefs = EncryptedPrefsFactory.create(context, PREFS_NAME)
@@ -46,6 +53,18 @@ class StudyManager(context: Context) {
         Log.d(TAG, "Saved participant state")
     }
 
+    /**
+     * Atomically read-modify-write the participant state under [STATE_LOCK]. No-op if no state
+     * exists yet. All state mutations should go through this so concurrent writers (activities and
+     * background workers) cannot clobber each other's updates.
+     */
+    private fun updateState(transform: (ParticipantState) -> ParticipantState) {
+        synchronized(STATE_LOCK) {
+            val current = getParticipantState() ?: return
+            saveParticipantState(transform(current))
+        }
+    }
+
     fun hasCompletedOnboarding(): Boolean {
         return getParticipantState()?.onboardingComplete == true
     }
@@ -63,16 +82,14 @@ class StudyManager(context: Context) {
     // ========================================================================
 
     fun getOrCreateStudyId(): String {
-        val state = getParticipantState()
-        if (state != null) {
-            return state.studyId
-        }
+        // Serialized so two concurrent callers can't each generate an ID and race to persist it.
+        synchronized(STATE_LOCK) {
+            getParticipantState()?.let { return it.studyId }
 
-        // Generate new study ID
-        val newId = generateStudyId()
-        val newState = ParticipantState.createNew(newId)
-        saveParticipantState(newState)
-        return newId
+            val newId = generateStudyId()
+            saveParticipantState(ParticipantState.createNew(newId))
+            return newId
+        }
     }
 
     private fun generateStudyId(): String {
@@ -242,14 +259,13 @@ class StudyManager(context: Context) {
     // STATE UPDATES
     // ========================================================================
 
-    fun markConsentGiven(informedConsent: Boolean, privacyConsent: Boolean) {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(
+    fun markConsentGiven(informedConsent: Boolean, privacyConsent: Boolean) = updateState { state ->
+        state.copy(
             consentGiven = true,
             consentInformed = informedConsent,
             consentPrivacy = privacyConsent,
             consentTimestampString = LocalDateTime.now().toString()
-        ))
+        )
     }
 
     fun getConsentData(): ConsentData? {
@@ -262,56 +278,38 @@ class StudyManager(context: Context) {
         )
     }
 
-    fun markOnboardingComplete() {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(onboardingComplete = true))
-    }
+    fun markOnboardingComplete() = updateState { it.copy(onboardingComplete = true) }
 
-    fun setGroup(group: Int) {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(group = group))
-    }
+    fun setGroup(group: Int) = updateState { it.copy(group = group) }
 
-    fun setEligibility(eligible: Boolean) {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(isEligible = eligible))
-    }
+    fun setEligibility(eligible: Boolean) = updateState { it.copy(isEligible = eligible) }
 
     fun markTimepointComplete(timepoint: Timepoint) {
-        val state = getParticipantState() ?: return
-
-        val newTimepointsCompleted = state.timepointsCompleted + timepoint.index
-
         val isComplete = timepoint == Timepoint.T4
-
-        val newState = state.copy(
-            timepointsCompleted = newTimepointsCompleted,
-            currentTimepoint = timepoint.index,
-            isStudyComplete = isComplete,
-            pendingQuestionnaire = false,
-            baselineDateString = if (timepoint == Timepoint.T0 && state.baselineDateString == null) {
-                LocalDate.now().toString()
-            } else {
-                state.baselineDateString
-            },
-            lastCompletionDateString = LocalDate.now().toString()
-        )
-
-        saveParticipantState(newState)
-
+        // Use the simulated date so debug time-travel writes a consistent baseline/completion date
+        // (production offset is 0, so this is LocalDate.now() in the field).
+        val today = getSimulatedCurrentDate().toString()
+        updateState { state ->
+            state.copy(
+                timepointsCompleted = state.timepointsCompleted + timepoint.index,
+                currentTimepoint = timepoint.index,
+                isStudyComplete = isComplete,
+                pendingQuestionnaire = false,
+                baselineDateString = if (timepoint == Timepoint.T0 && state.baselineDateString == null) {
+                    today
+                } else {
+                    state.baselineDateString
+                },
+                lastCompletionDateString = today
+            )
+        }
         Log.d(TAG, "Marked timepoint ${timepoint.displayName} complete. Study complete: $isComplete")
     }
 
-    fun markQuestionnairePending(pending: Boolean) {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(pendingQuestionnaire = pending))
-    }
+    fun markQuestionnairePending(pending: Boolean) = updateState { it.copy(pendingQuestionnaire = pending) }
 
-    fun updateLastUsageCollection() {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(
-            lastUsageCollectionString = LocalDateTime.now().toString()
-        ))
+    fun updateLastUsageCollection() = updateState {
+        it.copy(lastUsageCollectionString = LocalDateTime.now().toString())
     }
 
     /**
@@ -333,11 +331,7 @@ class StudyManager(context: Context) {
     // ========================================================================
 
     fun completeStudy() {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(
-            isStudyComplete = true,
-            pendingQuestionnaire = false
-        ))
+        updateState { it.copy(isStudyComplete = true, pendingQuestionnaire = false) }
         Log.d(TAG, "Study marked as complete")
     }
 
@@ -351,8 +345,7 @@ class StudyManager(context: Context) {
      * so the withdrawal can be retried; it is wiped only once the server confirms.
      */
     fun markWithdrawalPending() {
-        val state = getParticipantState() ?: return
-        saveParticipantState(state.copy(pendingWithdrawal = true))
+        updateState { it.copy(pendingWithdrawal = true) }
     }
 
     fun isWithdrawalPending(): Boolean {

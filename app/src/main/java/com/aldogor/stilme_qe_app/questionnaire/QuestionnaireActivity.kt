@@ -18,6 +18,7 @@ import com.aldogor.stilme_qe_app.databinding.ActivityQuestionnaireBinding
 import com.aldogor.stilme_qe_app.network.RedcapRepository
 import com.aldogor.stilme_qe_app.study.*
 import com.aldogor.stilme_qe_app.sync.SubmissionRepository
+import com.aldogor.stilme_qe_app.sync.SyncWorker
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -307,6 +308,9 @@ class QuestionnaireActivity : AppCompatActivity() {
                 payload = payload
             )
         }
+        // Kick an expedited sync so the queued payload is delivered as soon as connectivity
+        // returns, instead of waiting for the next hourly periodic run.
+        SyncWorker.triggerImmediateSync(applicationContext)
     }
 
     private fun showErrorDialog() {

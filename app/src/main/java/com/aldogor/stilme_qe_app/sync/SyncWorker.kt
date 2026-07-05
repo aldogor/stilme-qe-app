@@ -210,7 +210,9 @@ class QuestionnaireReminderWorker(
 
             notificationHelper.showQuestionnaireReminder(daysSinceWindowOpened)
 
-            studyManager.markQuestionnairePending(true)
+            // Intentionally does NOT write participant state here. The pendingQuestionnaire flag is
+            // never read for logic, and writing it from this daily worker could clobber a concurrent
+            // state update from the questionnaire flow (e.g. a just-completed timepoint).
         } else {
             Log.d(TAG, "No questionnaire due")
             notificationHelper.dismissQuestionnaireReminder()

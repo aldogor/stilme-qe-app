@@ -5,8 +5,8 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
+import com.aldogor.stilme_qe_app.study.StudyManager
 import com.google.gson.Gson
-import java.security.SecureRandom
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -27,12 +27,8 @@ class DataStorage(private val context: Context) {
         private const val KEY_USAGE_DATA_CORRUPT_BACKUP = "usage_data_json_corrupt_backup"
         private const val KEY_LAST_SYNC = "last_sync_timestamp"
         private const val KEY_LAST_BACKGROUND_SYNC = "last_background_sync_timestamp"
-        private const val KEY_STUDY_ID = "anonymous_study_id"
+        private const val KEY_STUDY_ID = "anonymous_study_id" // legacy key; cleared on withdrawal
         private const val MAX_STORAGE_DAYS = 140 // Keep max 140 days of data
-
-        // Study ID generation
-        private const val ID_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
-        private const val ID_LENGTH = 16
     }
 
     private val gson = Gson()
@@ -347,25 +343,13 @@ class DataStorage(private val context: Context) {
 
     /**
      * Gets or creates the anonymous study ID.
+     *
+     * Delegates to [StudyManager] so there is a SINGLE source of truth for the ID. Previously
+     * DataStorage generated its own ID (used by CSV export) that differed from StudyManager's
+     * (used for every REDCap submission), making exported data impossible to link to REDCap records.
      */
     fun getOrCreateStudyId(): String {
-        val existingId = encryptedPrefs.getString(KEY_STUDY_ID, null)
-        if (!existingId.isNullOrEmpty()) return existingId
-        
-        val newId = generateStudyId()
-        encryptedPrefs.edit {
-            putString(KEY_STUDY_ID, newId)
-        }
-        
-        Log.d(TAG, "Generated new study ID")
-        return newId
-    }
-    
-    private fun generateStudyId(): String {
-        val random = SecureRandom()
-        return (1..ID_LENGTH)
-            .map { ID_CHARS[random.nextInt(ID_CHARS.length)] }
-            .joinToString("")
+        return StudyManager(context).getOrCreateStudyId()
     }
 
     // ============================================================================

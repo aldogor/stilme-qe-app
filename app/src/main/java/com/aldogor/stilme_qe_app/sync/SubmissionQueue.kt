@@ -151,6 +151,10 @@ abstract class StilmeDatabase : RoomDatabase() {
                     StilmeDatabase::class.java,
                     "stilme_database"
                 )
+                    // WARNING: destructive migration wipes the whole submission queue on any schema
+                    // version bump. This queue exists precisely to NOT lose data, so before ever
+                    // incrementing @Database(version), add a real Migration (or export pending
+                    // payloads first) instead of relying on this fallback.
                     .fallbackToDestructiveMigration(dropAllTables = true)
                     .build()
                 INSTANCE = instance
