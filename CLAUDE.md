@@ -5,7 +5,7 @@ This document is for AI assistants working on this codebase. For project descrip
 > **IMPORTANT**: Keep documentation updated after completing significant tasks:
 > - **CLAUDE.md** - Architecture, code patterns, constraints
 > - **README.md** - User-facing project description, setup instructions
-> - **STILME_QE_DataDictionary.csv** - Data Dictionary when questionnaire fields change
+> - **stilme_qe_data_dictionary.csv** - Data Dictionary when questionnaire fields change
 
 ---
 
@@ -148,7 +148,7 @@ QuestionDefinition(
 2. **Add scoring function** in `ScoringEngine.kt` (handle reverse items if needed)
 3. **Update `ScaleScores`** data class in `StudyModels.kt`
 4. **Add to `calculateScores()`** and include in REDCap payload in `QuestionnaireActivity.kt`
-5. **Update `STILME_QE_DataDictionary.csv`** with new variables
+5. **Update `stilme_qe_data_dictionary.csv`** with new variables
 
 ### Adding a New Monitored App
 
@@ -235,7 +235,7 @@ All user-facing text in `strings.xml`. Never hardcode Italian in Kotlin code.
 | API token | `BuildConfig.REDCAP_API_TOKEN` (from `local.properties`) |
 | Format | JSON |
 | Offline support | Room-based queue with auto-retry |
-| Data Dictionary | `STILME_QE_DataDictionary.csv` |
+| Data Dictionary | `stilme_qe_data_dictionary.csv` |
 
 ---
 
@@ -348,7 +348,7 @@ Run with `./gradlew test`:
 | ProGuard rules | `app/proguard-rules.pro` |
 | Local config template | `local.properties.example` |
 | Update distribution | `update-info.json` (git-ignored, uploaded to Google Drive) |
-| REDCap Data Dictionary | `STILME_QE_DataDictionary.csv` |
+| REDCap Data Dictionary | `stilme_qe_data_dictionary.csv` |
 | Unit tests | `app/src/test/java/com/aldogor/stilme_qe_app/` |
 
 ---

@@ -233,7 +233,7 @@ See `CLAUDE.md` → *CLI Workflow* for emulator creation and the full command re
 
 2. **Import the Data Dictionary**:
    - Navigate to **Project Setup** > **Data Dictionary** > **Upload Data Dictionary**
-   - Upload `STILME_QE_DataDictionary.csv` from the repository root
+   - Upload `stilme_qe_data_dictionary.csv` from the repository root
 
 3. **Designate instruments to events**:
    - `start_q` → `baseline_arm_1` only
