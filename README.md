@@ -198,24 +198,30 @@ app/src/main/java/com/aldogor/stilme_qe_app/
 
 #### Prerequisites
 
-- Android Studio Ladybug (2024.2.1) or later
-- Android SDK 36
-- Kotlin 2.2+
-- JDK 17+
+No IDE required — the project builds entirely from the command line.
+
+- JDK 17 (e.g. [Eclipse Temurin](https://adoptium.net/)), with `JAVA_HOME` pointing to it
+- Android SDK with `cmdline-tools`, `platform-tools`, and platform 36 (`ANDROID_HOME` set)
+- Kotlin 2.2+ (provided by the Gradle build, no separate install)
 
 #### Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/aldogor/STILME-QE-APP.git
-cd STILME-QE-APP
+git clone https://github.com/aldogor/stilme-qe-app.git
+cd stilme-qe-app
 
 # Build the project
 ./gradlew build
 
-# Install on connected device
+# Run unit tests
+./gradlew test
+
+# Install on a connected device or running emulator
 ./gradlew installDebug
 ```
+
+See `CLAUDE.md` → *CLI Workflow* for emulator creation and the full command reference.
 
 #### REDCap Configuration
 
