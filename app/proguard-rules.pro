@@ -1,5 +1,5 @@
 # ==============================================================================
-# ProGuard rules for STILME-QE-APP
+# ProGuard rules for stilme-qe-app
 # ==============================================================================
 
 # Keep line numbers for crash reporting

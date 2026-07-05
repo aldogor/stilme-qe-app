@@ -1,4 +1,4 @@
-# CLAUDE.md - AI Assistant Guide for STILME-QE-APP
+# CLAUDE.md - AI Assistant Guide for stilme-qe-app
 
 This document is for AI assistants working on this codebase. For project description and setup, see `README.md`.
 

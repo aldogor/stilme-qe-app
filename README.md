@@ -1,4 +1,4 @@
-# STILME-QE-APP (Studio MIND TIME)
+# stilme-qe-app (Studio MIND TIME)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://www.android.com/)
@@ -12,7 +12,7 @@ A comprehensive Android application for a quasi-experimental research study inve
 
 ## Overview
 
-**STILME-QE-APP** (publicly known as **Studio MIND TIME**) is a research tool developed for the University of Turin's study *"Gli Screen Time Limits contribuiscono a ridurre l'uso dei social media e a migliorare la salute mentale?"*.
+**stilme-qe-app** (publicly known as **Studio MIND TIME**) is a research tool developed for the University of Turin's study *"Gli Screen Time Limits contribuiscono a ridurre l'uso dei social media e a migliorare la salute mentale?"*.
 
 The application serves as a complete research platform that:
 - Passively monitors social media usage across 11 platforms
@@ -413,5 +413,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 | Purpose | Contact |
 |---------|---------|
 | Research questions | progettoscreentime.dsspp@unito.it |
-| Bug reports | [GitHub Issues](https://github.com/aldogor/STILME-QE-APP/issues) |
+| Bug reports | [GitHub Issues](https://github.com/aldogor/stilme-qe-app/issues) |
 | Institution | University of Turin, Department of Public Health Sciences and Pediatrics |

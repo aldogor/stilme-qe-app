@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "STILME-QE-APP"
+rootProject.name = "stilme-qe-app"
 include(":app")
