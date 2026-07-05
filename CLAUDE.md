@@ -176,11 +176,13 @@ All encrypted prefs use `EncryptedPrefsFactory.create()` which wraps `EncryptedS
 private val prefs = EncryptedPrefsFactory.create(context, PREFS_FILE_NAME)
 ```
 
-**Recovery chain**: First attempt → catch `GeneralSecurityException` → delete corrupted file → retry → if retry also fails → fall back to unencrypted `SharedPreferences` (`{fileName}_fallback`) to prevent crash loops.
+**Instance caching**: `create()` caches one `SharedPreferences` per file name (creation is expensive and not thread-safe for concurrent first-time creation of the same file).
+
+**Recovery chain**: First attempt → catch `GeneralSecurityException`. Only if an `AEADBadTagException` is in the cause chain (true keystore corruption, data already unrecoverable) is the file deleted and recreated; a fallback to unencrypted `{fileName}_fallback` prevents a crash loop if recreation also fails. A **transient** `GeneralSecurityException` (e.g. a concurrent-creation race) retries **without deleting**, so valid study data is never destroyed by a non-corruption error.
 
 Three encrypted prefs files exist:
-- `stilme_qe_encrypted_prefs` (DataStorage) — usage data, study ID
-- `stilme_study_state` (StudyManager) — participant state, timepoints
+- `stilme_qe_encrypted_prefs` (DataStorage) — usage data (study ID now delegated to StudyManager)
+- `stilme_study_state` (StudyManager) — participant state, timepoints, study ID (single source of truth)
 - `stilme_secure_tokens` (SecureTokenManager) — API token override
 
 ### Null-Safety Convention for Study State
@@ -197,7 +199,11 @@ This prevents showing study UI to users who haven't completed onboarding yet.
 
 Uses `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `ParseError`). Failed submissions are queued in Room (`SubmissionQueue`) and retried by `SyncWorker`.
 
-**SyncWorker behavior**: Processes all pending submissions in a single run (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are deleted from the queue. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` are considered final failures (retried on next periodic run but don't request immediate WorkManager retry).
+**SyncWorker behavior**: Resets rows orphaned in `SUBMITTING` (worker killed mid-flight) back to `PENDING` at the start of each run, then processes all pending submissions (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are marked `EXPIRED` — **the payload is kept, never deleted**, so questionnaire data stays recoverable. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` don't request immediate WorkManager retry.
+
+**Permanent vs transient failures at submit time** (`QuestionnaireActivity`): a 4xx `ServerError` or `ParseError` is treated as permanent — the timepoint is **not** marked complete and the participant sees a real error (data stays queued for retry). Only `NetworkError` and 5xx `ServerError` mark the timepoint complete with an offline note. This prevents a deterministic rejection (bad token, Data Dictionary mismatch) from being shown as success and then silently lost.
+
+**Missed windows**: `StudyManager.getActiveTimepoint()` / `Timepoint.earliestDue()` offer the earliest *incomplete* timepoint whose window has opened, so a skipped 30-day window can still be completed rather than being permanently lost.
 
 ---
 
