@@ -33,3 +33,8 @@ local.properties
 
 # Update distribution (contains Google Drive URLs)
 update-info.json
+
+# Research project documents (private, never push to GitHub)
+# Exception: docs/superpowers/ holds dev specs/plans and stays tracked
+docs/*
+!docs/superpowers/
