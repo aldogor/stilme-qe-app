@@ -342,6 +342,24 @@ class StudyManager(context: Context) {
     }
 
     // ========================================================================
+    // WITHDRAWAL
+    // ========================================================================
+
+    /**
+     * Records that the participant requested withdrawal but the server-side confirmation
+     * (record deletion + tombstone) has not yet succeeded. Local data is intentionally KEPT
+     * so the withdrawal can be retried; it is wiped only once the server confirms.
+     */
+    fun markWithdrawalPending() {
+        val state = getParticipantState() ?: return
+        saveParticipantState(state.copy(pendingWithdrawal = true))
+    }
+
+    fun isWithdrawalPending(): Boolean {
+        return getParticipantState()?.pendingWithdrawal == true
+    }
+
+    // ========================================================================
     // DATA MANAGEMENT
     // ========================================================================
 

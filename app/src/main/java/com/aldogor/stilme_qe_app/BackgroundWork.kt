@@ -3,6 +3,7 @@ package com.aldogor.stilme_qe_app
 import android.content.Context
 import android.util.Log
 import androidx.work.*
+import com.aldogor.stilme_qe_app.study.StudyManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -40,6 +41,7 @@ class UsageDataWorker(
     }
 
     private val dataStorage = DataStorage(applicationContext)
+    private val studyManager = StudyManager(applicationContext)
 
     /**
      * Main work execution - collects and saves usage data silently.
@@ -47,6 +49,21 @@ class UsageDataWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             Log.d(TAG, "Starting usage data collection")
+
+            // Stop collecting if this is no longer an active study participant. This self-cancels
+            // a stale periodic worker after withdrawal, study completion, or ineligibility — so
+            // usage data is never collected once the participant has left the study.
+            val state = studyManager.getParticipantState()
+            val isActiveParticipant = state != null &&
+                state.onboardingComplete &&
+                state.isEligible &&
+                !state.isStudyComplete &&
+                !state.pendingWithdrawal
+            if (!isActiveParticipant) {
+                Log.d(TAG, "Not an active participant (complete/withdrawn/ineligible) — cancelling collection")
+                BackgroundScheduler.cancelAll(applicationContext)
+                return@withContext Result.success()
+            }
 
             // Check if we should run (unless forced)
             val forceSync = inputData.getBoolean(KEY_FORCE_SYNC, false)
@@ -209,6 +226,17 @@ object BackgroundScheduler {
     fun cancelWeeklyCollection(context: Context) {
         WorkManager.getInstance(context).cancelUniqueWork(UsageDataWorker.WORK_NAME)
         Log.d(TAG, "Weekly collection cancelled")
+    }
+
+    /**
+     * Cancels ALL background work (usage collection, REDCap sync, questionnaire reminders).
+     * Call on withdrawal and study completion so nothing keeps collecting or notifying.
+     */
+    fun cancelAll(context: Context) {
+        cancelWeeklyCollection(context)
+        com.aldogor.stilme_qe_app.sync.SyncWorker.cancelSync(context)
+        com.aldogor.stilme_qe_app.sync.QuestionnaireReminderWorker.cancelReminders(context)
+        Log.d(TAG, "All background work cancelled")
     }
 
     /**

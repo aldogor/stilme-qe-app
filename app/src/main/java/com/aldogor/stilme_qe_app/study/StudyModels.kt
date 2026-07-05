@@ -83,7 +83,10 @@ data class ParticipantState(
     val onboardingComplete: Boolean = false,
 
     @SerializedName("last_completion_date")
-    val lastCompletionDateString: String? = null // ISO-8601 date of last questionnaire completion
+    val lastCompletionDateString: String? = null, // ISO-8601 date of last questionnaire completion
+
+    @SerializedName("pending_withdrawal")
+    val pendingWithdrawal: Boolean = false // Withdrawal requested but server confirmation still pending
 ) {
     val baselineDate: LocalDate?
         get() = baselineDateString?.let { LocalDate.parse(it) }

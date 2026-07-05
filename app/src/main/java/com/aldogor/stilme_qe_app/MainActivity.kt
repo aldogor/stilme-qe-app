@@ -100,6 +100,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkStudyState() {
+        if (studyManager.isWithdrawalPending()) {
+            // A prior withdrawal wasn't confirmed by the server. Retry it now; on success it
+            // wipes local data and closes the app. Fall through so the app stays usable if the
+            // retry doesn't succeed (e.g. still offline).
+            retryPendingWithdrawal()
+        }
+
         if (studyManager.isStudyComplete()) {
             startActivity(Intent(this, ThankYouActivity::class.java))
             finish()
@@ -623,48 +630,40 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                // Stop all data collection immediately — this is unconditional. Even if the
+                // server deletion fails, the participant has requested withdrawal, so no further
+                // usage data or reminders should be processed.
+                BackgroundScheduler.cancelAll(applicationContext)
+
                 val studyId = studyManager.getStudyId()
 
-                if (studyId != null) {
-                    // Mark as withdrawn in REDCap (leaves a trace for audit trail)
-                    val result = withContext(Dispatchers.IO) {
-                        redcapRepository.markAsWithdrawn(studyId)
-                    }
-
-                    when (result) {
-                        is RedcapResult.Success -> {
-                            Log.d(TAG, "REDCap record marked as withdrawn successfully")
-                        }
-                        is RedcapResult.NetworkError -> {
-                            Log.w(TAG, "Could not mark as withdrawn in REDCap (offline), continuing with local deletion")
-                        }
-                        is RedcapResult.ServerError -> {
-                            Log.w(TAG, "REDCap withdrawal marking failed: ${result.message}")
-                        }
-                        is RedcapResult.ParseError -> {
-                            Log.w(TAG, "REDCap parse error: ${result.message}")
-                        }
-                    }
+                // No server record yet (e.g. never submitted): safe to wipe locally right away.
+                if (studyId == null) {
+                    wipeLocalDataAndFinish()
+                    return@launch
                 }
 
-                // Clear all local data regardless of REDCap result
-                withContext(Dispatchers.IO) {
-                    studyManager.clearAllData()
-                    dataStorage.clearAllData()
+                // Ask REDCap to delete the record and leave a withdrawal tombstone.
+                val result = withContext(Dispatchers.IO) {
+                    redcapRepository.markAsWithdrawn(studyId)
                 }
 
-                binding.withdrawLoadingOverlay.visibility = View.GONE
-
-                // Show success message using Material3 dialog
-                MaterialAlertDialogBuilder(this@MainActivity)
-                    .setTitle(getString(R.string.withdraw_success_title))
-                    .setMessage(getString(R.string.withdraw_success_message))
-                    .setPositiveButton(getString(R.string.ok_button)) { _, _ ->
-                        finishAffinity()
-                    }
-                    .setCancelable(false)
-                    .show()
-
+                if (result is RedcapResult.Success) {
+                    Log.d(TAG, "REDCap record withdrawn; wiping local data")
+                    wipeLocalDataAndFinish()
+                } else {
+                    // Server operation failed. Do NOT wipe local data: the study ID is the only
+                    // key that can delete the server-side record, so keep it and retry later.
+                    Log.w(TAG, "Withdrawal not confirmed by server; keeping data for retry")
+                    withContext(Dispatchers.IO) { studyManager.markWithdrawalPending() }
+                    binding.withdrawLoadingOverlay.visibility = View.GONE
+                    MaterialAlertDialogBuilder(this@MainActivity)
+                        .setTitle(getString(R.string.withdraw_pending_title))
+                        .setMessage(getString(R.string.withdraw_pending_message))
+                        .setPositiveButton(getString(R.string.ok_button)) { _, _ -> finishAffinity() }
+                        .setCancelable(false)
+                        .show()
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error during withdrawal", e)
                 binding.withdrawLoadingOverlay.visibility = View.GONE
@@ -673,6 +672,53 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.withdraw_error),
                     Toast.LENGTH_LONG
                 ).show()
+            }
+        }
+    }
+
+    private suspend fun wipeLocalDataAndFinish() {
+        withContext(Dispatchers.IO) {
+            studyManager.clearAllData()
+            dataStorage.clearAllData()
+        }
+        binding.withdrawLoadingOverlay.visibility = View.GONE
+        MaterialAlertDialogBuilder(this@MainActivity)
+            .setTitle(getString(R.string.withdraw_success_title))
+            .setMessage(getString(R.string.withdraw_success_message))
+            .setPositiveButton(getString(R.string.ok_button)) { _, _ -> finishAffinity() }
+            .setCancelable(false)
+            .show()
+    }
+
+    /**
+     * If a previous withdrawal couldn't be confirmed by the server, retry it silently on launch.
+     * On success the local data is wiped; otherwise it stays queued for the next attempt.
+     */
+    private fun retryPendingWithdrawal() {
+        lifecycleScope.launch {
+            val studyId = studyManager.getStudyId() ?: run {
+                withContext(Dispatchers.IO) {
+                    studyManager.clearAllData()
+                    dataStorage.clearAllData()
+                }
+                return@launch
+            }
+            BackgroundScheduler.cancelAll(applicationContext)
+            val result = withContext(Dispatchers.IO) { redcapRepository.markAsWithdrawn(studyId) }
+            if (result is RedcapResult.Success) {
+                Log.d(TAG, "Pending withdrawal confirmed on retry; wiping local data")
+                withContext(Dispatchers.IO) {
+                    studyManager.clearAllData()
+                    dataStorage.clearAllData()
+                }
+                MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle(getString(R.string.withdraw_success_title))
+                    .setMessage(getString(R.string.withdraw_success_message))
+                    .setPositiveButton(getString(R.string.ok_button)) { _, _ -> finishAffinity() }
+                    .setCancelable(false)
+                    .show()
+            } else {
+                Log.w(TAG, "Pending withdrawal still not confirmed; will retry next launch")
             }
         }
     }

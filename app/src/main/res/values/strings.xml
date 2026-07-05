@@ -204,6 +204,8 @@
     <string name="withdraw_success_title">Ritiro completato</string>
     <string name="withdraw_success_message">I tuoi dati sono stati eliminati con successo.\n\nGrazie comunque per l\'interesse mostrato verso la nostra ricerca.</string>
     <string name="withdraw_error">Errore durante il ritiro. Riprova o contattaci per assistenza.</string>
+    <string name="withdraw_pending_title">Ritiro in corso</string>
+    <string name="withdraw_pending_message">La raccolta dati è stata interrotta e la tua richiesta di ritiro è stata registrata. La rimozione dei dati dal server verrà completata automaticamente alla prossima apertura dell\'app con connessione a internet.</string>
     <string name="withdraw_cancelled">Ritiro annullato</string>
     <string name="withdraw_wrong_word">Digita esattamente \"RITIRO\" per confermare</string>
     <string name="withdraw_loading">Eliminazione in corso…</string>
