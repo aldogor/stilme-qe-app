@@ -323,6 +323,8 @@ Run with `./gradlew test`:
 
 | Content | Location |
 |---------|----------|
+| Research project docs (ethics/DPO, communication, article drafts) | `docs/` — **gitignored**, local only, not backed up by GitHub |
+| Dev specs and plans | `docs/superpowers/` — tracked in git (gitignore exception) |
 | All strings (Italian) | `res/values/strings.xml` |
 | Layouts | `res/layout/*.xml` |
 | Themes | `res/values/themes.xml`, `res/values-night/themes.xml` |

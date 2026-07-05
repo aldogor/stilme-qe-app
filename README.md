@@ -223,6 +223,8 @@ cd stilme-qe-app
 
 See `CLAUDE.md` → *CLI Workflow* for emulator creation and the full command reference.
 
+> **Note:** the `docs/` folder contains private research-project documents (ethics approvals, communication material, article drafts). It is gitignored — present only on the local machine, never pushed to GitHub.
+
 #### REDCap Configuration
 
 1. **Create a longitudinal REDCap project** with 5 events:
