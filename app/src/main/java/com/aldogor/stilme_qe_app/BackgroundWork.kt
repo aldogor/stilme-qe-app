@@ -104,6 +104,14 @@ class UsageDataWorker(
      */
     private fun collectAndSaveData(): CollectionResult {
         return try {
+            // Verify the usage-stats permission up front. queryUsageStats returns an EMPTY list
+            // (rather than throwing) when the permission has been revoked, so without this check
+            // the worker would silently fabricate 0-minute/0-open rows. This also makes the
+            // PermissionDenied branch reachable (the SecurityException catch below effectively is not).
+            if (!PermissionHelper(applicationContext).hasUsageStatsPermission()) {
+                return CollectionResult.PermissionDenied("Usage stats permission not granted")
+            }
+
             // Collect last 9 complete days
             val freshData = dataStorage.getUsageDataForLastNDays(COLLECTION_DAYS)
 

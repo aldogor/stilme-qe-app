@@ -24,6 +24,7 @@ class DataStorage(private val context: Context) {
         private const val TAG = "DataStorage"
         private const val PREFS_FILE_NAME = "stilme_qe_encrypted_prefs"
         private const val KEY_USAGE_DATA = "usage_data_json"
+        private const val KEY_USAGE_DATA_CORRUPT_BACKUP = "usage_data_json_corrupt_backup"
         private const val KEY_LAST_SYNC = "last_sync_timestamp"
         private const val KEY_LAST_BACKGROUND_SYNC = "last_background_sync_timestamp"
         private const val KEY_STUDY_ID = "anonymous_study_id"
@@ -86,6 +87,17 @@ class DataStorage(private val context: Context) {
         } catch (e: Exception) {
             Log.e(TAG, "Error querying usage events", e)
             emptyList()
+        }
+
+        // If the OS returned NO aggregated stats AND no events for the entire window, we have no
+        // access to underlying data (permission silently revoked, or the OS buffer is empty).
+        // Returning empty here — rather than building 0-minute/0-open rows for every day — prevents
+        // fabricated zeros from being saved and submitted to REDCap as if they were real usage.
+        // A genuinely abstinent participant still has stats for OTHER apps, so their true zero-social
+        // rows are preserved; only the total-absence case is treated as "no data".
+        if (usageStatsList.isEmpty() && usageEvents.isEmpty()) {
+            Log.w(TAG, "No usage stats or events for the window — treating as no data (not zeros)")
+            return emptyList()
         }
 
         // Group by date
@@ -157,9 +169,28 @@ class DataStorage(private val context: Context) {
      */
     fun saveUsageData(newData: List<DailyUsage>, isBackgroundSync: Boolean = false): Boolean {
         return try {
-            val existingData = getStoredUsageData()
+            val rawJson = encryptedPrefs.getString(KEY_USAGE_DATA, null)
+            val existingData: List<DailyUsage> = if (rawJson.isNullOrEmpty()) {
+                emptyList()
+            } else {
+                val parsed = try {
+                    gson.fromJson(rawJson, StoredUsageData::class.java)?.dailyUsage
+                } catch (e: Exception) {
+                    Log.e(TAG, "Stored usage data failed to parse", e)
+                    null
+                }
+                if (parsed == null) {
+                    // The stored blob is unreadable. Back it up and ABORT the save rather than
+                    // overwrite: a transient parse failure must never destroy accumulated history
+                    // by replacing it with just the latest 9 days.
+                    encryptedPrefs.edit { putString(KEY_USAGE_DATA_CORRUPT_BACKUP, rawJson) }
+                    Log.e(TAG, "Aborting save to preserve unreadable history (backed up)")
+                    return false
+                }
+                parsed
+            }
             val mergedData = mergeUsageData(existingData, newData)
-            
+
             val storageData = StoredUsageData(
                 version = 2,
                 lastUpdated = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
