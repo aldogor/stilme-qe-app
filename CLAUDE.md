@@ -286,20 +286,27 @@ The project is developed entirely from the command line. Toolchain (all machine-
 
 - **JDK**: Eclipse Temurin 17 (`JAVA_HOME` = `C:\Program Files\Eclipse Adoptium\jdk-17.x-hotspot`, user env var)
 - **SDK**: `%LOCALAPPDATA%\Android\Sdk` (`ANDROID_HOME`), with `cmdline-tools\latest`, `platform-tools`, `emulator` on PATH
+- **Android CLI** (Google's agent CLI, `android-cli.exe` at `C:\Users\Aldo\.android\bin\`, installed via `winget install Google.AndroidCLI`) — a convenience wrapper over the SDK tools. Note: not on PATH as `android` in freshly-inherited tool shells; call the full path.
 
-Common commands (PowerShell, from repo root):
+**Building/testing is always Gradle** (the Android CLI does not build):
 
 ```powershell
-.\gradlew assembleDebug          # debug APK -> app\build\outputs\apk\debug\MIND-TIME.apk
+.\gradlew assembleDebug          # debug APK -> app\build\outputs\apk\debug\MIND-TIME.apk (custom-named)
 .\gradlew test                   # unit tests (ScoringEngineTest, TimepointTest)
 .\gradlew assembleRelease        # release build (R8)
-sdkmanager --list_installed      # inspect SDK packages
-avdmanager list avd              # list emulators (AVD "stilme_test" exists, API 36)
-emulator -avd stilme_test        # boot emulator
-adb install -r app\build\outputs\apk\debug\MIND-TIME.apk
-adb shell am start -n com.aldogor.stilme_qe_app/.MainActivity
-adb logcat --pid=$(adb shell pidof -s com.aldogor.stilme_qe_app)
 ```
+
+**Emulator + deploy — prefer the Android CLI** (wraps avdmanager/emulator/adb; `emulator start` blocks until fully booted, `run` installs + launches in one step):
+
+```powershell
+android-cli emulator list                       # AVD "stilme_test" exists (API 36)
+android-cli emulator start stilme_test          # boots and waits until ready
+android-cli run --apks=app\build\outputs\apk\debug\MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
+android-cli emulator stop stilme_test
+android-cli skills list                          # manage Android agent skills (see .claude/skills/)
+```
+
+Raw fallback (if the Android CLI is unavailable): `sdkmanager --list_installed`, `avdmanager list avd`, `emulator -avd stilme_test`, `adb install -r <apk>`, `adb shell am start -n com.aldogor.stilme_qe_app/.MainActivity`, `adb logcat --pid=$(adb shell pidof -s com.aldogor.stilme_qe_app)`.
 
 > **⚠️ Known machine issue — Gradle "Unable to establish loopback connection"**: on this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (`C:\Users\Aldo\AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Workaround: run Gradle with `$env:TMP = "C:\WINDOWS\TEMP"; $env:TEMP = "C:\WINDOWS\TEMP"` set first. This applies to ALL Gradle invocations in any shell, including Claude Code sessions. Diagnosed 2026-07-05; root cause is directory-specific (likely a security-filter driver), machine works normally otherwise.
 
