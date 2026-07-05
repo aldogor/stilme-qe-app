@@ -270,6 +270,10 @@
     <!-- Offline submission note -->
     <string name="submission_offline_note">(I dati saranno sincronizzati quando tornerai online.)</string>
 
+    <!-- Submission error (permanent/server rejection) -->
+    <string name="submission_error_title">Invio non riuscito</string>
+    <string name="submission_error_message">Non è stato possibile inviare i dati al server. Le tue risposte sono salvate sul dispositivo e non sono andate perse. Puoi riprovare tra poco; se il problema persiste, contatta i ricercatori.</string>
+
     <!-- Update -->
     <string name="update_available_title">Aggiornamento disponibile</string>
     <string name="update_available_message">È disponibile la versione %1$s dell\'app. Ti consigliamo di aggiornare per una migliore esperienza.</string>

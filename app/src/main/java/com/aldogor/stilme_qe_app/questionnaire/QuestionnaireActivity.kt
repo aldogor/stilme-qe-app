@@ -270,30 +270,54 @@ class QuestionnaireActivity : AppCompatActivity() {
                 showSuccessDialog()
             }
             is RedcapResult.NetworkError -> {
-                // Queue for later
-                withContext(Dispatchers.IO) {
-                    submissionRepository.enqueue(
-                        studyId = responses.studyId,
-                        eventName = timepoint.redcapEventName,
-                        payload = payload
-                    )
-                }
+                // Genuinely offline: queue and mark complete; SyncWorker delivers it later.
+                enqueueForRetry(payload)
                 studyManager.markTimepointComplete(timepoint)
                 showSuccessDialog(offlineNote = true)
             }
-            is RedcapResult.ServerError, is RedcapResult.ParseError -> {
-                // Queue for later and show error
-                withContext(Dispatchers.IO) {
-                    submissionRepository.enqueue(
-                        studyId = responses.studyId,
-                        eventName = timepoint.redcapEventName,
-                        payload = payload
-                    )
+            is RedcapResult.ServerError -> {
+                if (result.code in 500..599) {
+                    // Transient server-side error: treat like offline, will retry successfully.
+                    enqueueForRetry(payload)
+                    studyManager.markTimepointComplete(timepoint)
+                    showSuccessDialog(offlineNote = true)
+                } else {
+                    // Permanent rejection (4xx: expired/wrong token, field or Data Dictionary
+                    // mismatch, wrong URL). Retrying the identical payload cannot succeed, so do
+                    // NOT claim success and do NOT mark the timepoint complete. Keep the payload
+                    // queued (recoverable) and let the participant retry; surface a real error.
+                    enqueueForRetry(payload)
+                    showErrorDialog()
                 }
-                studyManager.markTimepointComplete(timepoint)
-                showSuccessDialog(offlineNote = true)
+            }
+            is RedcapResult.ParseError -> {
+                // Local serialization bug or unparseable server response. Keep the payload
+                // queued, don't claim success, don't mark complete; surface an error.
+                enqueueForRetry(payload)
+                showErrorDialog()
             }
         }
+    }
+
+    private suspend fun enqueueForRetry(payload: String) {
+        withContext(Dispatchers.IO) {
+            submissionRepository.enqueue(
+                studyId = responses.studyId,
+                eventName = timepoint.redcapEventName,
+                payload = payload
+            )
+        }
+    }
+
+    private fun showErrorDialog() {
+        binding.loadingOverlay.visibility = View.GONE
+        binding.buttonSubmit.isEnabled = true
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.submission_error_title))
+            .setMessage(getString(R.string.submission_error_message))
+            .setPositiveButton(getString(R.string.ok_button), null)
+            .show()
     }
 
     private fun showSuccessDialog(offlineNote: Boolean = false) {

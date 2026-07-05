@@ -83,4 +83,42 @@ class TimepointTest {
         assertEquals(90, Timepoint.T3.daysFromBaseline)
         assertEquals(120, Timepoint.T4.daysFromBaseline)
     }
+
+    // ------------------------------------------------------------------------
+    // earliestDue — the missed-window fix: a skipped 30-day window must still be
+    // offerable, not permanently skipped.
+    // ------------------------------------------------------------------------
+
+    @Test
+    fun `earliestDue is T0 when nothing completed, regardless of current window`() {
+        assertEquals(Timepoint.T0, Timepoint.earliestDue(currentIndex = 0, completed = emptySet()))
+        // Even if the date says we're in T2's window, an incomplete T0 is offered first.
+        assertEquals(Timepoint.T0, Timepoint.earliestDue(currentIndex = 2, completed = emptySet()))
+    }
+
+    @Test
+    fun `earliestDue advances as earlier timepoints are completed`() {
+        assertEquals(Timepoint.T1, Timepoint.earliestDue(currentIndex = 1, completed = setOf(0)))
+        assertEquals(Timepoint.T2, Timepoint.earliestDue(currentIndex = 2, completed = setOf(0, 1)))
+    }
+
+    @Test
+    fun `earliestDue offers a skipped window instead of jumping ahead`() {
+        // Participant completed T0, missed T1's window, opens the app during T2's window.
+        // The date-derived current timepoint is T2, but T1 was never completed — so T1 must
+        // be offered (previously this returned T2 and T1 was lost forever).
+        assertEquals(Timepoint.T1, Timepoint.earliestDue(currentIndex = 2, completed = setOf(0)))
+    }
+
+    @Test
+    fun `earliestDue offers earliest of multiple skipped windows`() {
+        // Completed only T0; missed T1, T2, T3; now in T4's window. Offer T1 first.
+        assertEquals(Timepoint.T1, Timepoint.earliestDue(currentIndex = 4, completed = setOf(0)))
+    }
+
+    @Test
+    fun `earliestDue falls back to current index when all opened windows complete`() {
+        // All windows up to current are done — nothing earlier is due, stay at current.
+        assertEquals(Timepoint.T3, Timepoint.earliestDue(currentIndex = 3, completed = setOf(0, 1, 2, 3)))
+    }
 }

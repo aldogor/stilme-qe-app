@@ -91,6 +91,10 @@ class SyncWorker(
     }
 
     private suspend fun syncPendingSubmissions(): Result {
+        // Recover any rows orphaned in SUBMITTING by a previously-killed worker run,
+        // otherwise they would never be retried and the questionnaire would be lost.
+        submissionRepository.resetStuckSubmitting()
+
         val pending = submissionRepository.getPendingAndFailed()
 
         if (pending.isEmpty()) {
@@ -104,8 +108,9 @@ class SyncWorker(
 
         for (submission in pending) {
             if (submission.retryCount >= MAX_RETRIES) {
-                Log.w(TAG, "Submission ${submission.id} exceeded max retries, removing from queue")
-                submissionRepository.delete(submission)
+                // Do NOT delete: preserve the payload as EXPIRED so the data is recoverable.
+                Log.e(TAG, "Submission ${submission.id} exceeded max retries; marking EXPIRED (data kept)")
+                submissionRepository.markExpired(submission.id)
                 continue
             }
 

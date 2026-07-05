@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openQuestionnaire() {
-        val timepoint = studyManager.getCurrentTimepoint()
+        val timepoint = studyManager.getActiveTimepoint()
         val intent = Intent(this, QuestionnaireActivity::class.java).apply {
             putExtra(QuestionnaireActivity.EXTRA_TIMEPOINT, timepoint.index)
         }

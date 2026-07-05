@@ -147,15 +147,32 @@ class StudyManager(context: Context) {
         if (state.isStudyComplete) return false
         if (!state.isEligible) return false
 
-        val currentTimepoint = getCurrentTimepoint()
-        return currentTimepoint.index !in state.timepointsCompleted
+        // Due if ANY timepoint whose window has already opened is still incomplete.
+        // This handles skipped windows: a participant who missed T1's 30-day window can
+        // still complete it later instead of the timepoint being lost forever.
+        val currentIndex = getCurrentTimepoint().index
+        return (0..currentIndex).any { it !in state.timepointsCompleted }
+    }
+
+    /**
+     * The timepoint the participant should complete now: the earliest whose window has
+     * opened but which hasn't been completed yet.
+     *
+     * This differs from [getCurrentTimepoint], which is purely date-derived. If a participant
+     * skips a 30-day window (vacation, app not opened, etc.), [getCurrentTimepoint] would jump
+     * ahead and the missed timepoint's data would be permanently lost. [getActiveTimepoint]
+     * instead offers the earliest incomplete timepoint so no follow-up is silently skipped.
+     */
+    fun getActiveTimepoint(): Timepoint {
+        val state = getParticipantState() ?: return Timepoint.T0
+        return Timepoint.earliestDue(getCurrentTimepoint().index, state.timepointsCompleted)
     }
 
     fun getDaysUntilWindowCloses(): Int {
         val state = getParticipantState() ?: return 30
         val baselineDate = state.baselineDate ?: return 30
 
-        val currentTimepoint = getCurrentTimepoint()
+        val currentTimepoint = getActiveTimepoint()
         val windowEndDay = (currentTimepoint.index + 1) * 30 // Each window is 30 days
 
         val daysSinceBaseline = ChronoUnit.DAYS.between(baselineDate, getSimulatedCurrentDate()).toInt()
@@ -197,7 +214,7 @@ class StudyManager(context: Context) {
         val state = getParticipantState() ?: return 0
         val baselineDate = state.baselineDate ?: return 0
 
-        val currentTimepoint = getCurrentTimepoint()
+        val currentTimepoint = getActiveTimepoint()
         val windowStartDay = currentTimepoint.daysFromBaseline
         val daysSinceBaseline = ChronoUnit.DAYS.between(baselineDate, getSimulatedCurrentDate()).toInt()
 

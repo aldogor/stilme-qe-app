@@ -157,6 +157,19 @@ enum class Timepoint(val index: Int, val daysFromBaseline: Int, val displayName:
                 else -> T4
             }
         }
+
+        /**
+         * The timepoint a participant should complete now: the earliest timepoint whose window
+         * has opened (index 0..[currentIndex]) that is not yet in [completed]. If every opened
+         * window is already complete, returns the timepoint at [currentIndex].
+         *
+         * This is what prevents a skipped 30-day window from permanently losing that follow-up:
+         * a participant who missed T1 is offered T1 (not jumped ahead to T2).
+         */
+        fun earliestDue(currentIndex: Int, completed: Set<Int>): Timepoint {
+            val idx = (0..currentIndex).firstOrNull { it !in completed } ?: currentIndex
+            return fromIndex(idx) ?: T0
+        }
     }
 }
 
@@ -284,7 +297,14 @@ enum class SubmissionStatus {
     PENDING,
     SUBMITTING,
     FAILED,
-    SUCCESS
+    SUCCESS,
+
+    /**
+     * Exceeded the retry limit. The payload is KEPT (never deleted) so the questionnaire
+     * data is recoverable — a researcher can export it or a fixed build can re-send it.
+     * Excluded from the normal retry query so it doesn't loop forever.
+     */
+    EXPIRED
 }
 
 /**

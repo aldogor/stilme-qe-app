@@ -104,6 +104,13 @@ interface SubmissionDao {
     @Query("UPDATE submission_queue SET status = :status WHERE id = :id")
     suspend fun updateStatus(id: Long, status: SubmissionStatus)
 
+    /**
+     * Reset rows orphaned in SUBMITTING (worker killed mid-flight) back to PENDING so they
+     * get retried. Safe because only one sync worker runs at a time under the unique work name.
+     */
+    @Query("UPDATE submission_queue SET status = :toStatus WHERE status = :fromStatus")
+    suspend fun resetStatus(fromStatus: SubmissionStatus, toStatus: SubmissionStatus)
+
     @Query("SELECT * FROM submission_queue WHERE study_id = :studyId AND event_name = :eventName LIMIT 1")
     suspend fun findByStudyIdAndEvent(studyId: String, eventName: String): QueuedSubmission?
 }
@@ -213,6 +220,21 @@ class SubmissionRepository(context: Context) {
     suspend fun markFailed(id: Long, error: String?) {
         dao.updateRetry(id, SubmissionStatus.FAILED, error)
     }
+
+    /**
+     * Mark a submission as EXPIRED after exceeding the retry limit. The row (and its payload)
+     * is preserved rather than deleted, so the questionnaire data is never silently lost.
+     */
+    suspend fun markExpired(id: Long) {
+        dao.updateStatus(id, SubmissionStatus.EXPIRED)
+    }
+
+    /** Recover rows stuck in SUBMITTING (worker killed mid-flight) so they get retried. */
+    suspend fun resetStuckSubmitting() {
+        dao.resetStatus(SubmissionStatus.SUBMITTING, SubmissionStatus.PENDING)
+    }
+
+    suspend fun countExpired(): Int = dao.countByStatus(SubmissionStatus.EXPIRED)
 
     suspend fun delete(submission: QueuedSubmission) {
         dao.delete(submission)
