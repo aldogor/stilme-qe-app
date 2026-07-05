@@ -159,11 +159,11 @@ class RedcapRepository(private val context: Context) {
 
             if (response.isSuccessful) {
                 val body = response.body()?.string()
-                Log.d(TAG, "REDCap submission successful: $body")
+                Log.d(TAG, "REDCap submission successful")
                 RedcapResult.Success(body ?: "")
             } else {
                 val errorBody = response.errorBody()?.string()
-                Log.e(TAG, "REDCap submission failed: ${response.code()} - $errorBody")
+                Log.e(TAG, "REDCap submission failed: HTTP ${response.code()}")
                 RedcapResult.ServerError(response.code(), errorBody ?: "Unknown error")
             }
         } catch (e: IOException) {
@@ -277,7 +277,7 @@ class RedcapRepository(private val context: Context) {
                 RedcapResult.Success(studyId)
             } else {
                 val errorBody = importResponse.errorBody()?.string()
-                Log.e(TAG, "Failed to create tombstone: ${importResponse.code()} - $errorBody")
+                Log.e(TAG, "Failed to create tombstone: HTTP ${importResponse.code()}")
                 RedcapResult.ServerError(importResponse.code(), errorBody ?: "Unknown error")
             }
         } catch (e: IOException) {
@@ -308,11 +308,11 @@ class RedcapRepository(private val context: Context) {
 
             if (response.isSuccessful) {
                 val body = response.body()?.string()
-                Log.d(TAG, "REDCap record deletion successful: $body")
+                Log.d(TAG, "REDCap record deletion successful")
                 RedcapResult.Success(studyId)
             } else {
                 val errorBody = response.errorBody()?.string()
-                Log.e(TAG, "REDCap record deletion failed: ${response.code()} - $errorBody")
+                Log.e(TAG, "REDCap record deletion failed: HTTP ${response.code()}")
                 RedcapResult.ServerError(response.code(), errorBody ?: "Unknown error")
             }
         } catch (e: IOException) {

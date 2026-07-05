@@ -97,6 +97,15 @@
 -keep class com.aldogor.stilme_qe_app.BuildConfig { *; }
 
 # ==============================================================================
+# Logging — strip debug/verbose logs from release builds
+# (prevents sensitive REDCap payloads / participant state reaching logcat)
+# ==============================================================================
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+# ==============================================================================
 # WorkManager
 # ==============================================================================
 -keep class * extends androidx.work.Worker

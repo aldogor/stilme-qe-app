@@ -136,7 +136,17 @@ object UpdateChecker {
             if (body.isNullOrEmpty()) return@withContext null
 
             try {
-                gson.fromJson(body, UpdateInfo::class.java)
+                val parsed = gson.fromJson(body, UpdateInfo::class.java)
+                // Gson can populate non-null Kotlin fields with null from malformed
+                // JSON (e.g. Google Drive's HTML interstitial). Validate before use.
+                @Suppress("SENSELESS_COMPARISON")
+                if (parsed == null || parsed.version == null || parsed.version.isBlank() ||
+                    parsed.apkUrl == null || !parsed.apkUrl.startsWith("https://")
+                ) {
+                    Log.w(TAG, "Invalid update info: missing version or non-https apk_url")
+                    return@withContext null
+                }
+                parsed
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to parse update info", e)
                 null

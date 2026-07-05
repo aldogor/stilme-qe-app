@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Enforce HTTPS for REDCap server -->
+    <!-- Block cleartext traffic app-wide -->
+    <base-config cleartextTrafficPermitted="false" />
+    <!-- Enforce HTTPS for REDCap servers -->
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">redcap.unito.it</domain>
+        <domain includeSubdomains="true">medcap.unito.it</domain>
     </domain-config>
 </network-security-config>

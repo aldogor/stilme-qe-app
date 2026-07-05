@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.aldogor.stilme_qe_app.EncryptedPrefsFactory
 import com.google.gson.Gson
+import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -42,7 +43,7 @@ class StudyManager(context: Context) {
     fun saveParticipantState(state: ParticipantState) {
         val json = gson.toJson(state)
         prefs.edit().putString(KEY_PARTICIPANT_STATE, json).apply()
-        Log.d(TAG, "Saved participant state: $json")
+        Log.d(TAG, "Saved participant state")
     }
 
     fun hasCompletedOnboarding(): Boolean {
@@ -76,8 +77,9 @@ class StudyManager(context: Context) {
 
     private fun generateStudyId(): String {
         val chars = StudyConfig.ID_CHARS
+        val random = SecureRandom()
         return (1..StudyConfig.ID_LENGTH)
-            .map { chars.random() }
+            .map { chars[random.nextInt(chars.length)] }
             .joinToString("")
     }
 
