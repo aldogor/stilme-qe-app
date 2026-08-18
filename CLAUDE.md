@@ -95,25 +95,27 @@ Secrets and URLs (`REDCAP_API_TOKEN`, `REDCAP_API_URL`, `UPDATE_JSON_URL`) come 
 
 ### Toolchain & CLI Workflow
 
-Primary IDE is **Android Studio**; the project also builds from the command line, and both drive the same Gradle build. Machine-level setup on the dev machine:
+The dev machine has no Android Studio: everything runs from the command line. Gradle builds, the Android CLI drives emulators and deploys.
 
-- **Android Studio** bundles its own JBR (currently **JDK 21**), used for the IDE and its Gradle builds; no extra JDK setup is needed inside Studio.
-- **Terminal Gradle**: `JAVA_HOME` = Studio's JBR (`C:\Program Files\Android\Android Studio\jbr`), so `./gradlew` uses the same JVM as Studio. If Studio is ever removed, install a standalone JDK 17+ and repoint `JAVA_HOME`, or every terminal build dies with an invalid `JAVA_HOME`.
-- **Android CLI** (Google's `android-cli.exe` at `C:\Users\Aldo\.android\bin\`, `winget install Google.AndroidCLI`): the preferred way to drive emulators and deploy APKs from the command line; wraps avdmanager/emulator/adb. Building is still Gradle. Not on PATH as `android` in freshly-inherited tool shells; call the full path.
-- The debug APK is custom-named: `app\build\outputs\apk\debug\MIND-TIME.apk`.
+- **JDK**: Gradle needs a JDK 17+ on `JAVA_HOME`; nothing bundles one any more. If `java` is not found, install one (`winget install EclipseAdoptium.Temurin.21.JDK`) and point the user-level `JAVA_HOME` at it, otherwise every `./gradlew` call dies with an invalid `JAVA_HOME`.
+- **Android SDK**: `%LOCALAPPDATA%\Android\Sdk` (`ANDROID_HOME`), with `platform-tools` and `emulator` on PATH; platforms 33 to 36 and the API 36 system images are installed.
+- **Android CLI**: the `android` command on PATH (WinGet shim, `winget install Google.AndroidCLI`) downloads the real binary into `%USERPROFILE%\.android\bin\android-cli.exe` on first run and keeps it updated. `android skills add <id>` installs Google's Android skills into the current project's `.claude/skills/` (gitignored there).
+- **AVD**: `medium_phone` (API 36, google_apis_playstore x86_64), created with `android emulator create medium_phone`; the first `create` downloads the system image (about 1.5 GB) and takes several minutes.
+- The debug APK is custom-named: `app/build/outputs/apk/debug/MIND-TIME.apk`.
 
-Emulator + deploy (`emulator start` blocks until fully booted, `run` installs and launches in one step):
+Emulator + deploy (`run` installs and launches in one step):
 
 ```powershell
-android-cli emulator list                       # AVD "stilme_test" exists (API 36)
-android-cli emulator start stilme_test
-android-cli run --apks=app\build\outputs\apk\debug\MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
-android-cli emulator stop stilme_test
+android emulator list
+android emulator start medium_phone
+android run --apks=app/build/outputs/apk/debug/MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
+android emulator stop medium_phone
 ```
 
-> **⚠️ Known machine issue: Gradle "Unable to establish loopback connection"**. On this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (`C:\Users\Aldo\AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Reproduces on JDK 17 and JDK 21, and affects Gradle from **any** launcher, terminal **and Android Studio** (Studio inherits the user `TEMP`).
->   - **Terminal:** run Gradle with `$env:TMP = "C:\WINDOWS\TEMP"; $env:TEMP = "C:\WINDOWS\TEMP"` set first.
->   - **Android Studio:** if IDE builds fail with this error, set user-level `TMP`/`TEMP` env vars to a known-good dir (e.g. `C:\WINDOWS\TEMP`) and restart Studio, or launch Studio from a shell that has them set.
+`emulator start` is meant to return once the device is ready, but the first boot of a fresh image can outlast its own wait: `adb shell getprop sys.boot_completed` printing `1` is the reliable signal.
+
+> **⚠️ Known machine issue: Gradle "Unable to establish loopback connection"**. On this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (`C:\Users\Aldo\AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Reproduces on JDK 17 and JDK 21, from any launcher that inherits the user `TEMP`.
+>   - Run Gradle with `$env:TMP = "C:\WINDOWS\TEMP"; $env:TEMP = "C:\WINDOWS\TEMP"` set first (or set the user-level `TMP`/`TEMP` variables to that directory once).
 >
 > Diagnosed 2026-07-05; root cause is directory-specific (likely a security-filter driver on the user Temp dir), machine works normally otherwise.
 

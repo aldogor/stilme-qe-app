@@ -34,4 +34,4 @@ Uninstall and reinstall, or Settings > Apps > MIND TIME > Clear data: both wipe 
 
 ## Emulator
 
-Machine setup (Android CLI, AVD `stilme_test`, TEMP workaround for Gradle) is in `CLAUDE.md`, section Toolchain.
+Machine setup (Android CLI, AVD name, TEMP workaround for Gradle) is in `CLAUDE.md`, section Toolchain.

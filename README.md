@@ -198,11 +198,11 @@ app/src/main/java/com/aldogor/stilme_qe_app/
 
 #### Prerequisites
 
-The project can be built from **Android Studio** or from the **command line** — both drive the same Gradle build.
+The build is plain Gradle, so it runs from any shell; Android Studio works too but is not required.
 
-- **Android Studio** (latest stable) — primary IDE; bundles its own JDK, so building in Studio needs no extra setup
-- **For command-line builds:** a JDK 17+ on `JAVA_HOME` (pointing at Android Studio's bundled JBR is fine, or install a standalone [Eclipse Temurin](https://adoptium.net/) JDK)
+- A **JDK 17+** on `JAVA_HOME` (for example [Eclipse Temurin](https://adoptium.net/) 21)
 - **Android SDK** with `platform-tools` and platform 36 (`ANDROID_HOME` set)
+- **Android CLI** (`winget install Google.AndroidCLI`, command `android`) for creating and starting emulators and deploying APKs from the terminal; optional if you use Studio or raw `adb`
 - Kotlin 2.2+ (provided by the Gradle build, no separate install)
 
 #### Setup
@@ -222,7 +222,7 @@ cd stilme-qe-app
 ./gradlew installDebug
 ```
 
-See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the JDK setting, the Android CLI emulator and deploy commands, and a known Gradle issue on the development machine.
+See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the Android CLI emulator and deploy commands and a known Gradle issue on the development machine.
 
 > **Note:** the `docs/` folder contains private research-project documents (ethics approvals, communication material, article drafts). It is gitignored — present only on the local machine, never pushed to GitHub.
 
