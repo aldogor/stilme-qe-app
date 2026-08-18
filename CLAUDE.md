@@ -1,80 +1,13 @@
 # CLAUDE.md - AI Assistant Guide for stilme-qe-app
 
-This document is for AI assistants working on this codebase. For project description and setup, see `README.md`.
+This document is for AI assistants working on this codebase. For project description, setup and the annotated source tree, see `README.md`. Sources live under `app/src/main/java/com/aldogor/stilme_qe_app/` (packages `onboarding/`, `questionnaire/`, `network/`, `sync/`, `stl_guide/`, `update/`, `study/`).
 
 > **IMPORTANT**: Keep documentation updated after completing significant tasks:
-> - **CLAUDE.md** - Architecture, code patterns, constraints
-> - **README.md** - User-facing project description, setup instructions
-> - **stilme_qe_data_dictionary.csv** - Data Dictionary when questionnaire fields change
+> - **CLAUDE.md**: architecture, code patterns, constraints
+> - **README.md**: user-facing project description, setup instructions
+> - **stilme_qe_data_dictionary.csv**: REDCap Data Dictionary, whenever questionnaire fields change
 
----
-
-## Key Characteristics
-
-| Property | Value |
-|----------|-------|
-| **Language** | Kotlin (100%) |
-| **Min SDK** | 29 (Android 10) |
-| **Target/Compile SDK** | 36 (Android 16) |
-| **Java Version** | 11 |
-| **Architecture** | MVVM with Repository pattern |
-| **UI Language** | Italian only (all strings in `strings.xml`) |
-| **Package Name** | `com.aldogor.stilme_qe_app` |
-
----
-
-## Project Structure
-
-```
-app/src/main/java/com/aldogor/stilme_qe_app/
-├── MainActivity.kt              # Main screen: status, questionnaire card, group instructions,
-│                                # invite friends, contact, withdrawal
-├── Models.kt                    # Usage data models: DailyUsage, AppUsageData, AppConfig
-│                                # Contains MONITORED_APPS list (11 social media apps)
-├── DataStorage.kt               # Encrypted usage data storage, CSV export, data merging
-├── EncryptedPrefsFactory.kt     # Factory for EncryptedSharedPreferences with keystore
-│                                # corruption recovery (catches AEADBadTagException)
-├── BackgroundWork.kt            # WorkManager scheduler for weekly background data collection
-├── PermissionHelper.kt          # Runtime permission checks: UsageStats, Notifications, Battery
-├── PermissionRecoveryActivity.kt # Blocks app when permissions are revoked after onboarding
-├── NotificationHelper.kt        # Questionnaire reminders with escalating urgency
-│
-├── onboarding/                  # First-run flow (linear, no back navigation on key steps)
-│   ├── OnboardingActivity.kt    # Fragment container for onboarding steps
-│   ├── WelcomeFragment.kt       # Study introduction with external link
-│   ├── ConsentFragment.kt       # Informed consent with 2 Yes/No questions (DPO requirement)
-│   │                            # Contains clickable links to privacy policy and documents
-│   ├── PermissionFragment.kt    # Requests UsageStats + Notifications + Battery (all mandatory)
-│   └── IneligibleFragment.kt    # Personalized ineligibility messages
-│
-├── questionnaire/               # In-app surveys (T0 baseline + T1-T4 monthly)
-│   ├── QuestionnaireActivity.kt # Scrollable questionnaire with sticky progress bar
-│   │                            # Handles early eligibility screening and data submission
-│   ├── QuestionAdapter.kt       # RecyclerView adapter supporting: RADIO, YESNO, TEXT, SCALE
-│   │                            # Implements branching logic (showIf conditions)
-│   ├── ScoringEngine.kt         # Scale scoring (including PSS-10 reverse) and group assignment
-│   └── QuestionnaireData.kt     # All question definitions for T0 and monthly questionnaires
-│
-├── network/                     # REDCap API layer
-│   └── RedcapApiService.kt      # Retrofit interface, SecureTokenManager, RedcapRepository
-│
-├── sync/                        # Background sync and offline support
-│   ├── SubmissionQueue.kt       # Room database for queuing failed submissions
-│   └── SyncWorker.kt            # Periodic sync worker + questionnaire reminder worker
-│
-├── stl_guide/                   # Group-specific intervention guidance
-│   ├── GroupInstructionsFragment.kt  # Instructions for all 3 groups
-│   └── GroupInstructionsActivity.kt  # Standalone activity for viewing instructions
-│
-├── update/                      # In-app update mechanism
-│   └── UpdateChecker.kt         # Checks Google Drive JSON for updates, throttled to once/day
-│
-└── study/                       # Study state management
-    ├── StudyModels.kt           # ParticipantState, Timepoint, StudyGroup, StudyConfig,
-    │                            # ConsentData, ScaleScores, QuestionnaireResponses
-    ├── StudyManager.kt          # Participant state, timepoint calculations, debug time travel
-    └── ThankYouActivity.kt      # Study completion screen with counseling link
-```
+Step-by-step procedures (adding a scale or a monitored app, editing the consent text, enabling debug buttons and time travel) live in the project skills under `.claude/skills/stilme-*/`, not here.
 
 ---
 
@@ -83,86 +16,19 @@ app/src/main/java/com/aldogor/stilme_qe_app/
 ### Study Groups
 
 Group assignment logic (in `ScoringEngine.calculateGroup()`):
-1. If `using_time_limits == 1` → `INELIGIBLE_USING_STL` (code -1)
-2. If `is_unito_student == 0` OR `age_group == 99` → `INELIGIBLE_SCREENING` (code -2)
-3. If `interested_in_limit == 0` → `CONTROL` (code 1)
-4. If `limit_method == 1` → `STL_INTERVENTION` (code 2)
-5. If `limit_method == 2` → `PERSONAL_COMMITMENT` (code 3)
+1. If `using_time_limits == 1`, `INELIGIBLE_USING_STL` (code -1)
+2. If `is_unito_student == 0` OR `age_group == 99`, `INELIGIBLE_SCREENING` (code -2)
+3. If `interested_in_limit == 0`, `CONTROL` (code 1)
+4. If `limit_method == 1`, `STL_INTERVENTION` (code 2)
+5. If `limit_method == 2`, `PERSONAL_COMMITMENT` (code 3)
 
 ### Timepoints
 
-```kotlin
-enum class Timepoint(val index: Int, val daysFromBaseline: Int, val displayName: String) {
-    T0(0, 0, "Baseline"),
-    T1(1, 30, "Follow-up 1 mese"),
-    T2(2, 60, "Follow-up 2 mesi"),
-    T3(3, 90, "Follow-up 3 mesi"),
-    T4(4, 120, "Follow-up finale")
-}
-```
+`Timepoint` (in `study/StudyModels.kt`): T0 baseline, then T1 to T4 at 30, 60, 90 and 120 days from baseline. Each questionnaire window lasts 30 days. After T4 the study is complete.
 
-Each questionnaire window is 30 days. After T4, the study is complete.
+### Scales and branching
 
-### Ineligibility Reasons
-
-| Reason | Variable Check | String resource |
-|--------|----------------|-----------------|
-| Not UniTO student | `is_unito_student == 0` | `ineligible_reason_not_unito` |
-| Over 30 years old | `age_group == 99` | `ineligible_reason_age` |
-| Already using STL | `using_time_limits == 1` | `ineligible_reason_using_stl` |
-
-### Psychometric Scales
-
-| Scale | Items | Range | Reverse Items |
-|-------|-------|-------|---------------|
-| BSMAS | 6 | 6-30 | None |
-| PHQ-9 | 9 | 0-27 | None |
-| GAD-7 | 7 | 0-21 | None |
-| FoMO | 10 | 10-50 | None |
-| PSS-10 | 10 | 0-40 | Items 4,5,7,8 |
-
-**PSS-10 Reverse Scoring**: Items 4, 5, 7, and 8 are reverse-scored (4 - response) before summing.
-
-### Branching Logic
-
-Supported operators: `EQUALS`, `NOT_EQUALS`, `IN`, `NOT_IN`, `GREATER_THAN`, `LESS_THAN`
-
-```kotlin
-QuestionDefinition(
-    variableName = "followup_question",
-    showIf = BranchingCondition(
-        dependsOn = "parent_question",
-        operator = BranchingOperator.EQUALS,
-        value = 1
-    )
-)
-```
-
----
-
-## Common Development Tasks
-
-### Adding a New Psychometric Scale
-
-1. **Define questions** in `QuestionnaireData.kt` using `QuestionDefinition` with `QuestionType.SCALE`, `scaleGroup`, and `scaleInstructions`
-2. **Add scoring function** in `ScoringEngine.kt` (handle reverse items if needed)
-3. **Update `ScaleScores`** data class in `StudyModels.kt`
-4. **Add to `calculateScores()`** and include in REDCap payload in `QuestionnaireActivity.kt`
-5. **Update `stilme_qe_data_dictionary.csv`** with new variables
-
-### Adding a New Monitored App
-
-Add to `AppConfig.MONITORED_APPS` in `Models.kt`:
-```kotlin
-"com.newapp.package" to "New App Name"
-```
-
-### Updating Consent Text
-
-1. Edit `consent_full_text` in `res/values/strings.xml`
-2. If link positions change, verify `ConsentFragment.setupConsentLinks()` finds "seguente link" texts
-3. Update URLs if needed: `consent_privacy_info_url`, `consent_download_docs_url`
-4. The privacy question has a clickable link text defined by `consent_link_privacy_policy` in `strings.xml` — if changed, update both the string resource and `consent_question_privacy` to match
+Five scales (BSMAS, PHQ-9, GAD-7, FoMO, PSS-10). Only PSS-10 has reverse-scored items: 4, 5, 7 and 8 are scored as `4 - response` before summing. Conditional questions use `showIf = BranchingCondition(dependsOn, operator, value)` on `QuestionDefinition`.
 
 ---
 
@@ -170,38 +36,28 @@ Add to `AppConfig.MONITORED_APPS` in `Models.kt`:
 
 ### Encrypted Storage
 
-All encrypted prefs use `EncryptedPrefsFactory.create()` which wraps `EncryptedSharedPreferences` with automatic recovery from Android Keystore corruption (`AEADBadTagException`):
-
-```kotlin
-private val prefs = EncryptedPrefsFactory.create(context, PREFS_FILE_NAME)
-```
+All encrypted prefs go through `EncryptedPrefsFactory.create(context, fileName)`, which wraps `EncryptedSharedPreferences` with automatic recovery from Android Keystore corruption (`AEADBadTagException`).
 
 **Instance caching**: `create()` caches one `SharedPreferences` per file name (creation is expensive and not thread-safe for concurrent first-time creation of the same file).
 
-**Recovery chain**: First attempt → catch `GeneralSecurityException`. Only if an `AEADBadTagException` is in the cause chain (true keystore corruption, data already unrecoverable) is the file deleted and recreated; a fallback to unencrypted `{fileName}_fallback` prevents a crash loop if recreation also fails. A **transient** `GeneralSecurityException` (e.g. a concurrent-creation race) retries **without deleting**, so valid study data is never destroyed by a non-corruption error.
+**Recovery chain**: first attempt, then catch `GeneralSecurityException`. Only if an `AEADBadTagException` is in the cause chain (true keystore corruption, data already unrecoverable) is the file deleted and recreated; a fallback to unencrypted `{fileName}_fallback` prevents a crash loop if recreation also fails. A **transient** `GeneralSecurityException` (e.g. a concurrent-creation race) retries **without deleting**, so valid study data is never destroyed by a non-corruption error.
 
 Three encrypted prefs files exist:
-- `stilme_qe_encrypted_prefs` (DataStorage) — usage data (study ID now delegated to StudyManager)
-- `stilme_study_state` (StudyManager) — participant state, timepoints, study ID (single source of truth)
-- `stilme_secure_tokens` (SecureTokenManager) — API token override
+- `stilme_qe_encrypted_prefs` (DataStorage): usage data
+- `stilme_study_state` (StudyManager): participant state, timepoints, study ID (single source of truth)
+- `stilme_secure_tokens` (SecureTokenManager): API token override
 
 ### Null-Safety Convention for Study State
 
-`StudyManager` boolean accessors use `== true` (not `!= false`) so that a null `ParticipantState` returns `false`:
-- `isEligible()` → `false` when no state exists
-- `isQuestionnaireDue()` → `false` when no state exists
-- `hasCompletedOnboarding()` → `false` when no state exists
-- `isStudyComplete()` → `false` when no state exists
-
-This prevents showing study UI to users who haven't completed onboarding yet.
+`StudyManager` boolean accessors use `== true` (not `!= false`) so that a null `ParticipantState` returns `false`: `isEligible()`, `isQuestionnaireDue()`, `hasCompletedOnboarding()`, `isStudyComplete()` are all `false` when no state exists. This prevents showing study UI to users who haven't completed onboarding yet.
 
 ### REDCap Submission
 
 Uses `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `ParseError`). Failed submissions are queued in Room (`SubmissionQueue`) and retried by `SyncWorker`.
 
-**SyncWorker behavior**: Resets rows orphaned in `SUBMITTING` (worker killed mid-flight) back to `PENDING` at the start of each run, then processes all pending submissions (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are marked `EXPIRED` — **the payload is kept, never deleted**, so questionnaire data stays recoverable. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` don't request immediate WorkManager retry.
+**SyncWorker behavior**: resets rows orphaned in `SUBMITTING` (worker killed mid-flight) back to `PENDING` at the start of each run, then processes all pending submissions (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are marked `EXPIRED`; **the payload is kept, never deleted**, so questionnaire data stays recoverable. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` don't request immediate WorkManager retry.
 
-**Permanent vs transient failures at submit time** (`QuestionnaireActivity`): a 4xx `ServerError` or `ParseError` is treated as permanent — the timepoint is **not** marked complete and the participant sees a real error (data stays queued for retry). Only `NetworkError` and 5xx `ServerError` mark the timepoint complete with an offline note. This prevents a deterministic rejection (bad token, Data Dictionary mismatch) from being shown as success and then silently lost.
+**Permanent vs transient failures at submit time** (`QuestionnaireActivity`): a 4xx `ServerError` or `ParseError` is treated as permanent: the timepoint is **not** marked complete and the participant sees a real error (data stays queued for retry). Only `NetworkError` and 5xx `ServerError` mark the timepoint complete with an offline note. This prevents a deterministic rejection (bad token, Data Dictionary mismatch) from being shown as success and then silently lost.
 
 **Missed windows**: `StudyManager.getActiveTimepoint()` / `Timepoint.earliestDue()` offer the earliest *incomplete* timepoint whose window has opened, so a skipped 30-day window can still be completed rather than being permanently lost.
 
@@ -211,157 +67,63 @@ Uses `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `Par
 
 ### Permissions
 
-All three are **mandatory** — `PermissionRecoveryActivity` blocks the app if any is revoked:
-- `PACKAGE_USAGE_STATS` — social media usage data
-- `POST_NOTIFICATIONS` — questionnaire reminders
-- Battery Optimization Exemption — reliable background work
+All three are **mandatory**; `PermissionRecoveryActivity` blocks the app if any is revoked:
+- `PACKAGE_USAGE_STATS`: social media usage data
+- `POST_NOTIFICATIONS`: questionnaire reminders
+- Battery Optimization Exemption: reliable background work
+
+### Onboarding and consent
+
+Onboarding is linear, with no back navigation on the key steps. The consent screen has two Yes/No questions, both required (DPO requirement); do not merge them.
 
 ### Privacy
 
-- **No PII**: Never collect name, email, phone, device ID
+- **No PII**: never collect name, email, phone, device ID
 - **Anonymous IDs**: 16-char random alphanumeric (`StudyConfig.ID_CHARS`)
 - **Encryption**: AES-256-GCM via `EncryptedPrefsFactory`
-- **HTTPS only**: Network security config blocks cleartext
+- **HTTPS only**: network security config blocks cleartext
 
 ### Italian Language
 
 All user-facing text in `strings.xml`. Never hardcode Italian in Kotlin code.
 
-### REDCap Integration
-
-| Setting | Value |
-|---------|-------|
-| API endpoint | `BuildConfig.REDCAP_API_URL` (from `local.properties`) |
-| API token | `BuildConfig.REDCAP_API_TOKEN` (from `local.properties`) |
-| Format | JSON |
-| Offline support | Room-based queue with auto-retry |
-| Data Dictionary | `stilme_qe_data_dictionary.csv` |
-
----
-
-## Debugging
-
-### Debug Day Offset (Time Travel)
-
-Debug buttons are **hidden by default** (`debug_buttons_container` has `visibility="gone"` in `activity_main.xml`). To enable:
-- Set `android:visibility="visible"` in XML, or
-- Uncomment the `BuildConfig.DEBUG` block in `MainActivity.setupUI()`
-
-**What it affects**: `isQuestionnaireDue()`, `getCurrentTimepoint()`, `getDaysSinceWindowOpened()`, `getDaysUntilWindowCloses()`, UI status messages
-
-**What it does NOT affect**: Background data collection, UsageStats dates, REDCap timestamps, `lastCompletionDateString`, WorkManager scheduling
-
-**Testing notifications after time jump**: WorkManager uses real time, so press "Test notifica" button to trigger the notification check with the simulated date.
-
-### Clear All App State
-
-- Uninstall and reinstall, or
-- Settings > Apps > MIND TIME > Clear Data, or
-- `studyManager.clearAllData()`
-
 ---
 
 ## Build Configuration
 
-### Local Properties
-
-Copy `local.properties.example` to `local.properties`:
-
-```properties
-sdk.dir=/path/to/your/android/sdk
-REDCAP_API_TOKEN=YOUR_TOKEN_HERE
-REDCAP_API_URL=https://www.medcap.unito.it/redcap/api/
-UPDATE_JSON_URL=https://drive.google.com/uc?export=download&id=YOUR_JSON_FILE_ID
-```
-
-These are injected into `BuildConfig` at build time. `local.properties` is git-ignored.
-
-### Build Tools
-
-| Tool | Version |
-|------|---------|
-| Android Gradle Plugin (AGP) | 8.13.2 |
-| Kotlin | 2.2.21 |
-| KSP | 2.2.21-RC2-2.0.4 |
-
-KSP is used instead of KAPT for Room annotation processing (faster, Windows-compatible).
+Secrets and URLs (`REDCAP_API_TOKEN`, `REDCAP_API_URL`, `UPDATE_JSON_URL`) come from the git-ignored `local.properties` (template: `local.properties.example`) and are injected into `BuildConfig` at build time. Room annotation processing uses KSP, not KAPT (faster, Windows-compatible).
 
 ### Toolchain & CLI Workflow
 
-Primary IDE is **Android Studio**; the project also builds from the command line — both drive the same Gradle build. Toolchain (machine-level, already configured on the dev machine):
+Primary IDE is **Android Studio**; the project also builds from the command line, and both drive the same Gradle build. Machine-level setup on the dev machine:
 
-- **Android Studio**: primary IDE. Bundles its own JBR (currently **JDK 21**), used for both the IDE and its Gradle builds by default — no extra JDK setup needed to build inside Studio.
-- **JDK for terminal Gradle**: `JAVA_HOME` = Studio's JBR (`C:\Program Files\Android\Android Studio\jbr`), so `./gradlew` from a shell uses the same JVM as Studio. The project builds cleanly on JDK 21. (If Studio is ever removed, install a standalone JDK 17+ and repoint `JAVA_HOME`, or every terminal build dies with an invalid `JAVA_HOME`.)
-- **SDK**: `%LOCALAPPDATA%\Android\Sdk` (`ANDROID_HOME`), with `platform-tools`, `emulator` (and optionally `cmdline-tools\latest`) on PATH.
-- **Android CLI** (Google's `android-cli.exe` at `C:\Users\Aldo\.android\bin\`, `winget install Google.AndroidCLI`) — the preferred way to drive emulators and deploy APKs from the command line (handy for agent/CLI-driven work, independent of launching the IDE); wraps avdmanager/emulator/adb. Building is still Gradle. Not on PATH as `android` in freshly-inherited tool shells; call the full path.
+- **Android Studio** bundles its own JBR (currently **JDK 21**), used for the IDE and its Gradle builds; no extra JDK setup is needed inside Studio.
+- **Terminal Gradle**: `JAVA_HOME` = Studio's JBR (`C:\Program Files\Android\Android Studio\jbr`), so `./gradlew` uses the same JVM as Studio. If Studio is ever removed, install a standalone JDK 17+ and repoint `JAVA_HOME`, or every terminal build dies with an invalid `JAVA_HOME`.
+- **Android CLI** (Google's `android-cli.exe` at `C:\Users\Aldo\.android\bin\`, `winget install Google.AndroidCLI`): the preferred way to drive emulators and deploy APKs from the command line; wraps avdmanager/emulator/adb. Building is still Gradle. Not on PATH as `android` in freshly-inherited tool shells; call the full path.
+- The debug APK is custom-named: `app\build\outputs\apk\debug\MIND-TIME.apk`.
 
-**Building/testing is Gradle** (inside Studio, or from a shell — the Android CLI does not build):
-
-```powershell
-.\gradlew assembleDebug          # debug APK -> app\build\outputs\apk\debug\MIND-TIME.apk (custom-named)
-.\gradlew test                   # unit tests (ScoringEngineTest, TimepointTest)
-.\gradlew assembleRelease        # release build (R8)
-```
-
-**Emulator + deploy — prefer the Android CLI** (wraps avdmanager/emulator/adb; `emulator start` blocks until fully booted, `run` installs + launches in one step):
+Emulator + deploy (`emulator start` blocks until fully booted, `run` installs and launches in one step):
 
 ```powershell
 android-cli emulator list                       # AVD "stilme_test" exists (API 36)
-android-cli emulator start stilme_test          # boots and waits until ready
+android-cli emulator start stilme_test
 android-cli run --apks=app\build\outputs\apk\debug\MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
 android-cli emulator stop stilme_test
-android-cli skills list                          # manage Android agent skills (see .claude/skills/)
 ```
 
-Raw fallback (if the Android CLI is unavailable): `sdkmanager --list_installed`, `avdmanager list avd`, `emulator -avd stilme_test`, `adb install -r <apk>`, `adb shell am start -n com.aldogor.stilme_qe_app/.MainActivity`, `adb logcat --pid=$(adb shell pidof -s com.aldogor.stilme_qe_app)`.
-
-> **⚠️ Known machine issue — Gradle "Unable to establish loopback connection"**: on this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (`C:\Users\Aldo\AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Reproduces on both JDK 17 and JDK 21, and affects Gradle from **any** launcher — a terminal **and Android Studio** (Studio inherits the user `TEMP`).
+> **⚠️ Known machine issue: Gradle "Unable to establish loopback connection"**. On this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (`C:\Users\Aldo\AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Reproduces on JDK 17 and JDK 21, and affects Gradle from **any** launcher, terminal **and Android Studio** (Studio inherits the user `TEMP`).
 >   - **Terminal:** run Gradle with `$env:TMP = "C:\WINDOWS\TEMP"; $env:TEMP = "C:\WINDOWS\TEMP"` set first.
 >   - **Android Studio:** if IDE builds fail with this error, set user-level `TMP`/`TEMP` env vars to a known-good dir (e.g. `C:\WINDOWS\TEMP`) and restart Studio, or launch Studio from a shell that has them set.
 >
 > Diagnosed 2026-07-05; root cause is directory-specific (likely a security-filter driver on the user Temp dir), machine works normally otherwise.
-
-### R8/ProGuard
-
-Release builds use R8 with rules in `app/proguard-rules.pro`. Key keep rules: Retrofit interfaces, Gson `@SerializedName` fields, Room entities, Tink/AndroidX Security Crypto, WorkManager workers, Kotlin enums.
-
-### In-App Updates
-
-Checks a JSON file hosted on Google Drive (throttled to once/day). The JSON contains `version` and `apk_url`. Both the JSON file and the APK are hosted on Google Drive. Configure `UPDATE_JSON_URL` in `local.properties`.
-
-### Unit Tests
-
-Run with `./gradlew test`:
-- `ScoringEngineTest.kt` — All 5 scales, PSS-10 reverse scoring, group assignment (5 paths + error)
-- `TimepointTest.kt` — Boundary conditions, REDCap event names
 
 ---
 
 ## File Locations
 
 | Content | Location |
-|---------|----------|
-| Research project docs (ethics/DPO, communication, article drafts) | `docs/` — **gitignored**, local only, not backed up by GitHub |
-| Dev specs and plans | `docs/superpowers/` — tracked in git (gitignore exception) |
-| All strings (Italian) | `res/values/strings.xml` |
-| Layouts | `res/layout/*.xml` |
-| Themes | `res/values/themes.xml`, `res/values-night/themes.xml` |
-| Colors | `res/values/colors.xml` |
-| Network security | `res/xml/network_security_config.xml` |
-| Build config | `app/build.gradle.kts` |
-| Dependencies | `gradle/libs.versions.toml` |
-| ProGuard rules | `app/proguard-rules.pro` |
-| Local config template | `local.properties.example` |
-| Update distribution | `update-info.json` (git-ignored, uploaded to Google Drive) |
+|---|---|
+| Research project docs (ethics/DPO, communication, article drafts) and dev specs/plans/reviews (`docs/superpowers/`) | `docs/`: **gitignored**, local only, not backed up by GitHub |
+| Project skills (procedures for AI assistants) | `.claude/skills/stilme-*/`: tracked; the rest of `.claude/` stays local |
 | REDCap Data Dictionary | `stilme_qe_data_dictionary.csv` |
-| Unit tests | `app/src/test/java/com/aldogor/stilme_qe_app/` |
-
----
-
-## Contact
-
-| Type | Contact |
-|------|---------|
-| Research Email | progettoscreentime.dsspp@unito.it |
-| Developer | Aldo Gorga MD |
-| Institution | University of Turin, Department of Public Health Sciences and Pediatrics |
+| Update distribution | `update-info.json` (git-ignored, uploaded to Google Drive together with the APK) |

@@ -222,7 +222,7 @@ cd stilme-qe-app
 ./gradlew installDebug
 ```
 
-See `CLAUDE.md` → *Toolchain & CLI Workflow* for the Android Studio JDK setting, emulator creation, and the full command reference.
+See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the JDK setting, the Android CLI emulator and deploy commands, and a known Gradle issue on the development machine.
 
 > **Note:** the `docs/` folder contains private research-project documents (ethics approvals, communication material, article drafts). It is gitignored — present only on the local machine, never pushed to GitHub.
 

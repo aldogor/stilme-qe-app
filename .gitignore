@@ -37,5 +37,8 @@ update-info.json
 # Research project documents + internal dev specs/plans/reviews (private, never push to GitHub)
 docs/
 
-# Claude Code local config, skills, and settings (not for GitHub)
-.claude/
+# Claude Code local config and third-party skills stay local; project skills (stilme-*) travel with the repo
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/stilme-*/
