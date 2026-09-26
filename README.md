@@ -224,7 +224,7 @@ cd stilme-qe-app
 
 See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the Android CLI emulator and deploy commands and a known Gradle issue on the development machine.
 
-> **Note:** the `docs/` folder contains private research-project documents (ethics approvals, communication material, article drafts). It is gitignored — present only on the local machine, never pushed to GitHub.
+> **Note:** this public repository holds the app. The research-project documents (ethics approvals, communication material, article drafts, literature) are kept in the project's private repository and left out of this one.
 
 #### REDCap Configuration
 

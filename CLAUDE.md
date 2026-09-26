@@ -121,11 +121,22 @@ android emulator stop medium_phone
 
 ---
 
+## Repository layout: internal and public
+
+This repository is the **internal** one and holds the whole project: the app, `docs/` and `JOURNAL.md`. Its remote `origin` is the private GitHub repository `aldogor/stilme-qe-app-internal`. The **public** repository `aldogor/stilme-qe-app` (remote `public`) receives only a cut of it: everything except the paths listed in `public_exclude.txt`.
+
+- Work, commit and push on `master` to `origin` as usual. **Never push `master` to `public`**: it carries the internal history.
+- To publish the app: `python tools/publish_public.py` builds the cut from HEAD on the local branch `public-master` (one "Publish" commit per call, verified against the manifest), then `git push public public-master:master`. The hook `tools/pre-push` refuses any other push to `public`; install it once per clone with `cp tools/pre-push .git/hooks/pre-push`.
+- A new internal file outside `docs/`, or a move of one, updates `public_exclude.txt` in the same commit.
+
 ## File Locations
 
 | Content | Location |
 |---|---|
-| Research project docs (ethics/DPO, communication, article drafts) and dev specs/plans/reviews (`docs/superpowers/`) | `docs/`: **gitignored**, local only, not backed up by GitHub |
+| Research project docs (ethics/DPO, communication, article drafts) and dev specs/plans/reviews (`docs/superpowers/`) | `docs/`: tracked in the internal repository only (see *Repository layout*). `docs/PROJECT_CONTEXT.md` is the project briefing; `docs/drive/` mirrors the team's Google Drive folder and is gitignored |
+| Project journal: dated record of verifications, intermediate decisions and what is open (the *why*; git holds *what changed*) | `JOURNAL.md`: update it, with the date, in every session that verifies or decides something; its last "Open as of" is the project's state. Internal only |
+| Final study data (MedCap exports) | `docs/data/raw/`: **immutable**, read-only originals; cleaned data go to `docs/data/processed/` as tidy CSV with a codebook, and every transformation is a script. Both folders are gitignored: pseudonymised health data never goes to GitHub, not even the internal repository |
+| Literature library for writing (index by citation key, BibTeX, open-access PDF/XML, Markdown text of each work) | `docs/literature/`: start from `bibliography.csv` and `README.md`; rebuilt by the numbered scripts in `docs/literature/scripts/` |
 | Project skills (procedures for AI assistants) | `.claude/skills/stilme-*/`: tracked; the rest of `.claude/` stays local |
 | REDCap Data Dictionary | `stilme_qe_data_dictionary.csv` |
 | Update distribution | `update-info.json` (git-ignored, uploaded to Google Drive together with the APK) |
