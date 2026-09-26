@@ -102,6 +102,7 @@ The dev machine has no Android Studio: everything runs from the command line. Gr
 - **Android CLI**: the `android` command on PATH (WinGet shim, `winget install Google.AndroidCLI`) downloads the real binary into `%USERPROFILE%\.android\bin\android-cli.exe` on first run and keeps it updated. `android skills add <id>` installs Google's Android skills into the current project's `.claude/skills/` (gitignored there).
 - **AVD**: `medium_phone` (API 36, google_apis_playstore x86_64), created with `android emulator create medium_phone`; the first `create` downloads the system image (about 1.5 GB) and takes several minutes.
 - The debug APK is custom-named: `app/build/outputs/apk/debug/MIND-TIME.apk`.
+- **R** (data analysis): 4.6.1 in `C:\Program Files\R\R-4.6.1`, its `bin` on the user PATH, so scripts run with `Rscript script.R`; the folder name carries the version, so the PATH entry changes with each R upgrade.
 
 Emulator + deploy (`run` installs and launches in one step):
 
@@ -136,7 +137,7 @@ This repository is the **internal** one and holds the whole project: the app, `d
 | Research project docs (ethics/DPO, communication, article drafts) and dev specs/plans/reviews (`docs/superpowers/`) | `docs/`: tracked in the internal repository only (see *Repository layout*). `docs/PROJECT_CONTEXT.md` is the project briefing; `docs/drive/` mirrors the team's Google Drive folder and is gitignored |
 | Project journal: dated record of verifications, intermediate decisions and what is open (the *why*; git holds *what changed*) | `JOURNAL.md`: update it, with the date, in every session that verifies or decides something; its last "Open as of" is the project's state. Internal only |
 | Final study data (MedCap exports) | `docs/data/raw/`: **immutable**, read-only originals; cleaned data go to `docs/data/processed/` as tidy CSV with a codebook, and every transformation is a script. Both folders are gitignored: pseudonymised health data never goes to GitHub, not even the internal repository |
-| Data analysis | Exploration may be done directly, with any tool. **Every result meant for the paper (numbers, tables, figures) is produced by an R script** in `docs/analysis/`, reading the data from `docs/data/`; a number found during exploration enters the paper only once an R script reproduces it |
+| Data analysis | Exploration may be done directly, with any tool. **Every result meant for the paper (numbers, tables, figures) is produced by an R script** in `docs/analysis/`, reading the data from `docs/data/`; a number found during exploration enters the paper only once an R script reproduces it. The research questions, and whether and how the data answer each, live only in `docs/PROJECT_CONTEXT.md`, referred to by their content, never by a number |
 | Literature library for writing (index by citation key, BibTeX, open-access PDF/XML, Markdown text of each work) | `docs/literature/`: start from `bibliography.csv` and `README.md`; rebuilt by the numbered scripts in `docs/literature/scripts/` |
 | Project skills (procedures for AI assistants) | `.claude/skills/stilme-*/`: tracked; the rest of `.claude/` stays local |
 | REDCap Data Dictionary | `stilme_qe_data_dictionary.csv` |

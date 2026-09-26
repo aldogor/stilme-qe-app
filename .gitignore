@@ -22,6 +22,10 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Environment files with secrets
+.env
+.env.*
+
 # Android Studio
 .idea/
 *.iml
