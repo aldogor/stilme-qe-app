@@ -38,7 +38,7 @@ local.properties
 # Update distribution (contains Google Drive URLs)
 update-info.json
 
-# docs/ is tracked in the internal repository and left out of the public cut (public_exclude.txt).
+# docs/ is tracked in the internal repository only: publish.txt does not name it.
 # These parts of it stay out of every repository:
 # - study data: pseudonymised health data stays on this machine and on MedCap, never on GitHub.
 #   The online project's data dictionary and the codebook of the processed tables describe fields,

@@ -13,7 +13,7 @@ Step-by-step procedures (adding a scale or a monitored app, editing the consent 
 
 These hold for everyone who works in this repository and for their Claude. Where authority lives is in *File Locations* below.
 
-- **Git practice:** shared. Each piece of work goes on its own branch and reaches `master` through a pull request, which the repository owner merges; nobody commits to `master` directly. `public-master` is the publication branch described under *Repository layout*, not a feature branch. Nothing secret is committed: `local.properties` and `.env` stay local.
+- **Git practice:** shared. Each piece of work goes on its own branch and reaches `master` through a pull request, which the repository owner merges; nobody commits to `master` directly. Nothing secret is committed: `local.properties` and `.env` stay local.
 - **Language.** Documents, code comments and commit messages in English; the app's user-facing text in Italian, in `strings.xml`.
 - **Journal.** `JOURNAL.md` gets one entry per working session that verifies or decides something, headed by its ISO date, with the data and sources behind each decision; the entry's last line names what it opened and what it closed (`Opened: ...; closed: ...`). The journal ends with one open list (`## Open`), edited in place, which is the state of the project. Consolidated decisions go into `docs/PROJECT_CONTEXT.md`; git is the changelog, so there is no CHANGELOG or TODO file.
 - **Citations.** Inline author and year, hyperlinked to the DOI: `[Smith et al., 2023](https://doi.org/10.xxxx/yyyy)`; a source without a stable link is cited inline without one. Works in the library are identified by their key in `docs/literature/bibliography.csv`, and every citation is checked against its source before it enters a document.
@@ -135,11 +135,11 @@ android emulator stop medium_phone
 
 ## Repository layout: internal and public
 
-This repository is the **internal** one and holds the whole project: the app, `docs/` and `JOURNAL.md`. Its remote `origin` is the private GitHub repository `aldogor/stilme-qe-app-internal`. The **public** repository `aldogor/stilme-qe-app` (remote `public`) receives only a cut of it: everything except the paths listed in `public_exclude.txt`.
+This repository is the **internal** one and holds the whole project: the app, `docs/` and `JOURNAL.md`. Its remote `origin` is the private GitHub repository `aldogor/stilme-qe-app-internal`. The **public** repository `aldogor/stilme-qe-app` receives only what `publish.txt`, at the root, lists: an include-list, so a tracked file it does not name stays internal.
 
-- Work reaches `master` on `origin` through pull requests, as *Conventions* says. **Never push `master` to `public`**: it carries the internal history.
-- To publish the app: `python tools/publish_public.py` builds the cut from HEAD on the local branch `public-master` (one "Publish" commit per call, verified against the manifest), then `git push public public-master:master`. The hook `tools/pre-push` refuses any other push to `public`; install it once per clone with `cp tools/pre-push .git/hooks/pre-push`.
-- A new internal file outside `docs/`, or a move of one, updates `public_exclude.txt` in the same commit.
+- Work reaches `master` on `origin` through pull requests, as *Conventions* says. The public repository has its own clone in the sibling folder `../stilme-qe-app-public` (once per machine: `gh repo clone aldogor/stilme-qe-app ../stilme-qe-app-public`), where nobody works, so the internal history reaches it only through publication.
+- To publish the app, the owner runs the publish script of the aldogor-share skill (plugin aldogor-code): `python <skill folder>/scripts/publish.py --check` lists what would go and writes nothing; without `--check` it builds the public tree from HEAD, holds back the files that never go public, stops on a stale rule or a credential, writes the tree into the sibling clone and commits there ("Publish <sha>: <subject>"). Pushing that clone is the owner's step.
+- A new file meant for the public version, or a move of a published one, updates `publish.txt` in the same commit.
 
 ## File Locations
 
