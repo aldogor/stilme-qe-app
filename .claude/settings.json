@@ -1,0 +1,33 @@
+{
+  "extraKnownMarketplaces": {
+    "aldogor-claude-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "aldogor/aldogor-claude-plugins"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "aldogor-core@aldogor-claude-plugins": true,
+    "superpowers@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null || exit 0; [ -d docs/data ] || exit 0; if [ -d docs/scripts/renv/library ] && ls -d docs/data/raw/medcap_2* >/dev/null 2>&1 && [ -f docs/data/processed/respondents.csv ]; then exit 0; fi; echo 'The local setup of this clone is incomplete: the R packages, the MedCap exports or the prepared tables are missing. At the first message, offer to guide the person through the setup step by step with the stilme-setup skill.'"
+          }
+        ]
+      }
+    ]
+  }
+}

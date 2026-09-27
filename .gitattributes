@@ -1,2 +1,5 @@
 # The pre-push hook is a shell script: keep LF endings on every platform
 tools/pre-push text eol=lf
+
+# Raw MedCap files are checked byte for byte against the SHA-256 in docs/data/README.md: git never converts them
+docs/data/raw/** -text

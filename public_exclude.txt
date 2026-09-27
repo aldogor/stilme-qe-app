@@ -19,3 +19,7 @@ docs/**
 # The journal: dated decisions and open items, with names and study details not written for
 # publication.
 JOURNAL.md
+
+# The setup guide for colleagues: it names the team's Drive folder holding the study data and
+# describes docs/, which the public cut does not carry.
+.claude/skills/stilme-setup/**

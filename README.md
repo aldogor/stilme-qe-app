@@ -249,6 +249,16 @@ See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the Android CLI emulato
    ```
    These values are injected into `BuildConfig` at build time. See `local.properties.example` for all available settings.
 
+### Working in this repository with Claude
+
+The repository carries its Claude Code configuration in `.claude/settings.json` and its conventions in `CLAUDE.md`.
+
+1. Install git and the GitHub CLI (on Windows `winget install Git.Git` and `winget install GitHub.cli`; on macOS `brew install git gh`) and sign in with `gh auth login`.
+2. Clone the repository, open Claude Code in it and accept the trust prompt: it registers the `aldogor-claude-plugins` marketplace and installs the plugins the project uses (aldogor-core, superpowers, security-guidance).
+3. The conventions (git practice, language, journal, citations, data rules) are in `CLAUDE.md`, which Claude reads at the start of every session. In a fresh clone of the project's internal repository, Claude notices that the local data and packages are missing and offers to guide the setup step by step.
+
+Each person's Claude creates a branch for each piece of work and opens a pull request, and the repository owner merges it. GitHub Free does not enforce reviews on a private repository, so the rule rests on `CLAUDE.md`.
+
 ---
 
 ## Data Collection
