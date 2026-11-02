@@ -52,9 +52,9 @@ docs/data/processed/*
 # - mirror of the team's Google Drive folder: Drive is its source and keeps its own history
 docs/drive/
 # - the texts of the literature library: publishers' PDFs and their Markdown cannot be passed on;
-#   bibliography.csv, the master record, is tracked
+#   bibliography.json, the record, is tracked
 docs/literature/*
-!docs/literature/bibliography.csv
+!docs/literature/bibliography.json
 # - the R package library of the analysis scripts is ignored by docs/scripts/renv/.gitignore
 
 # Claude Code: .claude/settings.json is the repository's whole Claude configuration and travels with it, as do

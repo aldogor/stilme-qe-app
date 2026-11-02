@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit
  * 2. Upload to Google Drive, share as "Anyone with the link"
  * 3. Set UPDATE_JSON_URL in local.properties to the direct download link:
  *    https://drive.google.com/uc?export=download&id=JSON_FILE_ID
+ *    A viewer link copied from Drive (https://drive.google.com/file/d/JSON_FILE_ID/view?usp=...)
+ *    also works: the check turns it into the download link (see toDirectDownloadUrl).
  */
 object UpdateChecker {
 
@@ -32,6 +34,9 @@ object UpdateChecker {
     private const val KEY_DISMISSED_VERSION = "dismissed_version"
     private const val KEY_LAST_CHECK = "last_check_time"
     private const val CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000L // 24 hours
+
+    // Drive file IDs are made of letters, digits, "-" and "_"
+    private val DRIVE_VIEWER_LINK = Regex("""^https://drive\.google\.com/file/d/([A-Za-z0-9_-]+)""")
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -70,7 +75,7 @@ object UpdateChecker {
         }
 
         try {
-            val updateInfo = fetchUpdateInfo(updateJsonUrl) ?: return
+            val updateInfo = fetchUpdateInfo(toDirectDownloadUrl(updateJsonUrl)) ?: return
 
             prefs.edit().putLong(KEY_LAST_CHECK, System.currentTimeMillis()).apply()
 
@@ -152,6 +157,17 @@ object UpdateChecker {
                 null
             }
         }
+    }
+
+    /**
+     * Turns a Google Drive viewer link (what Drive's "Copy link" gives:
+     * https://drive.google.com/file/d/FILE_ID/view?usp=...) into the direct download
+     * link of the same file. The viewer link returns an HTML page, so an update check
+     * that fetched it would never read the JSON. Any other URL is returned unchanged.
+     */
+    internal fun toDirectDownloadUrl(url: String): String {
+        val fileId = DRIVE_VIEWER_LINK.find(url)?.groupValues?.get(1) ?: return url
+        return "https://drive.google.com/uc?export=download&id=$fileId"
     }
 
     /**

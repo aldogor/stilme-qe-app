@@ -8,6 +8,7 @@ sdk.dir=/path/to/your/android/sdk
 REDCAP_API_TOKEN=YOUR_TOKEN_HERE
 REDCAP_API_URL=https://www.medcap.unito.it/redcap/api/
 
-# In-app update: direct download link to update-info.json on Google Drive
-# See README.md for setup instructions
+# In-app update: direct download link to update-info.json on Google Drive;
+# a viewer link copied from Drive (.../file/d/FILE_ID/view) also works, the app converts it
+# Setup: see the comment at the top of app/src/main/java/com/aldogor/stilme_qe_app/update/UpdateChecker.kt
 UPDATE_JSON_URL=https://drive.google.com/uc?export=download&id=YOUR_JSON_FILE_ID

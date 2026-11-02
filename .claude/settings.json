@@ -4,7 +4,8 @@
       "source": {
         "source": "github",
         "repo": "aldogor/aldogor-claude-plugins"
-      }
+      },
+      "autoUpdate": true
     },
     "claude-plugins-official": {
       "source": {
@@ -15,7 +16,6 @@
   },
   "enabledPlugins": {
     "aldogor-core@aldogor-claude-plugins": true,
-    "superpowers@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true
   },
   "hooks": {
