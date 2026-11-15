@@ -28,7 +28,7 @@ The application serves as a complete research platform that:
 | **Type** | Quasi-experimental longitudinal study with 3 parallel arms |
 | **Duration** | 4 months (baseline T0 + monthly follow-ups T1-T4) |
 | **Population** | University of Turin students aged 18-30 |
-| **Sample Size** | Target enrollment based on power analysis |
+| **Sample Size** | 311 planned (104 per group) |
 
 ### Study Groups
 
@@ -37,12 +37,21 @@ Participants are assigned to groups based on their interest in reducing social m
 | Group | Name | Description | Intervention |
 |-------|------|-------------|--------------|
 | **1** | Control | Not interested in reducing use | None - just complete questionnaires |
-| **2** | STL Intervention | Wants to reduce using tools | Set 30 min/day Screen Time Limits (PDF guide available) |
-| **3** | Personal Commitment | Wants to reduce without tools | Reduce use through willpower alone |
+| **2** | STL Intervention | Wants to reduce using tools | Set a 30-minute daily timer on each social media app (PDF guide available) |
+| **3** | Personal Commitment | Wants to reduce without tools | Stay within 30 minutes a day in total, through willpower alone |
 
 Additionally, two ineligibility categories exist:
 - **Already using STL**: Participants who already use Screen Time Limits cannot join
 - **Failed screening**: Not a UniTO student or over 30 years old
+
+### Version used in the study
+
+Data collection ended in 2026. Participants used version 2.1, tagged `v2.1`, apart from a few baseline questionnaires sent from version 2.0, whose questionnaire and scoring are the same. The commits after the tag correct defects found by a code review in July 2026 and were never distributed, so the tag is the code to read next to the study's data. The defects of version 2.1 that can show in the data:
+
+- a monthly questionnaire whose 30-day window was skipped was never offered again;
+- with the usage-access permission revoked, the background collection stored zero minutes and zero opens as real usage;
+- a submission rejected by the server was shown as sent and dropped after five retries;
+- the update check could not read its JSON file, so no update could be announced.
 
 ---
 
@@ -54,7 +63,7 @@ The app was designed with privacy as a core principle:
 
 | Feature | Implementation |
 |---------|----------------|
-| **Encryption** | AES-256-GCM for all stored data |
+| **Encryption** | AES-256-GCM for the stored usage data and the study state |
 | **Anonymity** | 16-character random alphanumeric IDs |
 | **No PII** | Never collects name, email, phone, or device ID |
 | **Secure transmission** | HTTPS-only communication with REDCap |
@@ -75,6 +84,8 @@ The app tracks usage across 11 major social media platforms using Android's Usag
 **Collection schedule:**
 - Background collection every 7 days
 - Fresh data collected at each questionnaire submission
+
+**How usage is measured:** minutes come from Android's daily usage statistics (`UsageStatsManager.queryUsageStats` with the daily interval), which the system aggregates in blocks of about 24 hours that need not start at midnight; the app assigns each block to the date on which it begins. Opens are `ACTIVITY_RESUMED` events from the event log, each dated by its own time, so a change of screen inside an app counts as an open. The minutes and the opens of one date can therefore refer to different 24 hours: sums over weeks or months are reliable, single days less so. At each collection the app re-reads the last 9 days and keeps the larger value.
 
 ### In-App Questionnaires
 
@@ -189,7 +200,7 @@ app/src/main/java/com/aldogor/stilme_qe_app/
    - Grant usage statistics and notification permissions
    - Complete the baseline questionnaire (~8-10 minutes)
 3. **Follow your group's instructions**:
-   - **Group 2**: Set up Screen Time Limits (30 min/day) as shown in the app
+   - **Group 2**: Set up Screen Time Limits (30 minutes on each app) as shown in the app
    - **Group 1 & 3**: No setup required
 4. **Complete monthly questionnaires** when notified (~5 minutes each)
 5. **Keep the app installed** for the full 4 months of the study
@@ -222,7 +233,15 @@ cd stilme-qe-app
 ./gradlew installDebug
 ```
 
-See `CLAUDE.md`, section *Toolchain & CLI Workflow*, for the Android CLI emulator and deploy commands and a known Gradle issue on the development machine.
+With the Android CLI, an emulator is created once (`android emulator create medium_phone`, which downloads the system image) and then started, and `run` installs and launches the debug APK in one step:
+
+```bash
+android emulator start medium_phone
+android run --apks=app/build/outputs/apk/debug/MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
+android emulator stop medium_phone
+```
+
+The first boot of a fresh image can outlast the wait of `emulator start`: `adb shell getprop sys.boot_completed` printing `1` is the reliable signal.
 
 > **Note:** this public repository holds the app. The research-project documents (ethics approvals, communication material, article drafts, literature) are kept in the project's private repository and left out of this one.
 
@@ -284,60 +303,6 @@ Each person's Claude creates a branch for each piece of work and opens a pull re
 
 ## User Interface
 
-### Complete App Flow
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FIRST LAUNCH                             │
-├─────────────────────────────────────────────────────────────────┤
-│  Welcome Screen                                                 │
-│  ├── Study introduction                                         │
-│  └── "More info" → External website                             │
-│           ↓                                                     │
-│  Consent Screen                                                 │
-│  ├── Full informed consent text (scrollable)                    │
-│  ├── Two clickable links for documents                          │
-│  └── Two Yes/No questions (both must be "Sì" to proceed)        │
-│           ↓                                                     │
-│  Permission Screen                                              │
-│  ├── Usage Statistics (mandatory)                               │
-│  └── Notifications (mandatory)                                  │
-│           ↓                                                     │
-│  Baseline Questionnaire (T0)                                    │
-│  ├── Early screening (UniTO student, age)                       │
-│  ├── Demographics and preferences                               │
-│  └── All 5 psychometric scales                                  │
-│           ↓                                                     │
-│  [If ineligible → IneligibleFragment with personalized reason]  │
-│           ↓                                                     │
-│  Group Instructions                                             │
-│  └── Specific instructions for assigned group                   │
-│           ↓                                                     │
-│  Main Screen                                                    │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                      MONTHLY FOLLOW-UP                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Notification → Open App                                        │
-│           ↓                                                     │
-│  Monthly Questionnaire                                          │
-│  ├── Academic status                                            │
-│  ├── All 5 scales                                               │
-│  └── [T4 + Group 2: Exit questions]                             │
-│           ↓                                                     │
-│  Main Screen (updated status)                                   │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                     AFTER T4 COMPLETION                         │
-├─────────────────────────────────────────────────────────────────┤
-│  Thank You Screen                                               │
-│  ├── Study completion message                                   │
-│  └── Link to university counseling service                      │
-└─────────────────────────────────────────────────────────────────┘
-```
-
 ### Main Screen Components
 
 After completing onboarding, the main screen displays:
@@ -363,7 +328,7 @@ After completing onboarding, the main screen displays:
 | Usage data | EncryptedSharedPreferences | AES-256-GCM |
 | Study state | EncryptedSharedPreferences | AES-256-GCM |
 | Questionnaire responses | Memory only (until submit) | N/A |
-| Offline queue | Room database | AES-256-GCM |
+| Offline queue | Room database in the app's private storage, until sent | Not encrypted by the app |
 
 ### Anonymity Guarantees
 
@@ -377,39 +342,7 @@ After completing onboarding, the main screen displays:
 
 ## Testing
 
-### Device Compatibility
-
-Test on these Android versions:
-
-| API | Version | Key Considerations |
-|-----|---------|-------------------|
-| 29 | Android 10 | Minimum supported - verify basic functionality |
-| 33 | Android 13 | Notification permission required at runtime |
-| 34 | Android 14 | Foreground service type declarations |
-| 35 | Android 15 | Edge-to-edge enforcement, predictive back |
-| 36 | Android 16 | Target version - full feature testing |
-
-### Debug Features (Hidden)
-
-The app includes developer tools for testing, **hidden by default** in production:
-
-| Feature | Purpose |
-|---------|---------|
-| **Export CSV** | Export usage data to clipboard for verification |
-| **Time Jump** | Simulate advancing days for timeline testing |
-
-**To enable debug features:**
-- **Option 1 (XML)**: Set `android:visibility="visible"` on `debug_buttons_container` in `activity_main.xml`
-- **Option 2 (Code)**: Uncomment the `BuildConfig.DEBUG` block in `MainActivity.setupUI()`
-
-**Time Jump Dialog (when enabled):**
-- **Status info**: Shows simulated date, offset, timepoint, questionnaire status
-- **Quick jump**: +1, +7, +14, +30 day buttons
-- **Custom input**: Enter any number of days
-- **Reset**: Return to real date
-- **Test notification**: Trigger notification check immediately
-
-**Important**: Jumping time does NOT auto-trigger notifications (WorkManager uses real time). Use the "Test notifica" button after jumping to trigger the notification check with the simulated date.
+`./gradlew test` runs the unit tests (scoring, timepoints, update check). The hidden debug tools (usage export, simulated passing of days, notification check) and how to enable them are described in `.claude/skills/stilme-debug-tools/SKILL.md`.
 
 ---
 

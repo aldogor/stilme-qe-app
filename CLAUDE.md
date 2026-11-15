@@ -1,162 +1,75 @@
-# CLAUDE.md - AI Assistant Guide for stilme-qe-app
+# CLAUDE.md
 
-This document is for AI assistants working on this codebase. For project description, setup and the annotated source tree, see `README.md`. Sources live under `app/src/main/java/com/aldogor/stilme_qe_app/` (packages `onboarding/`, `questionnaire/`, `network/`, `sync/`, `stl_guide/`, `update/`, `study/`).
+This repository holds the Android app (Kotlin) that collected the data of MIND-TIME (internal name STILME-QE), a quasi-experimental study on screen time limits among University of Turin students, and the study's research side under `docs/`. Data collection is over: participants keep version 2.1 (tag `v2.1`), no build goes to them, and changes to the code serve whoever reuses it. The current work is the data analysis in R. This is the internal, private repository (`origin` is `aldogor/stilme-qe-app-internal`); the public `aldogor/stilme-qe-app` receives only what `publish.txt` lists.
 
-> **IMPORTANT**: Keep documentation updated after completing significant tasks:
-> - **CLAUDE.md**: architecture, code patterns, constraints
-> - **README.md**: user-facing project description, setup instructions
-> - **stilme_qe_data_dictionary.csv**: REDCap Data Dictionary, whenever questionnaire fields change
+## Where authority lives
 
-Step-by-step procedures (adding a scale or a monitored app, editing the consent text, enabling debug buttons and time travel) live in the project skills under `.claude/skills/stilme-*/`, not here.
+| File or folder | What it holds, and when it changes |
+|---|---|
+| `README.md` | The app for developers: features, source tree, build, emulator and REDCap setup. Public. It changes with the app or its setup |
+| `docs/PROJECT_CONTEXT.md` | The study briefing with its consolidated decisions, and the single source of the research questions, which are referred to by their content, never by a number |
+| `docs/analysis-plan.md` | The statistical analysis plan: an analysis follows it or records its deviation there |
+| `JOURNAL.md` | Dated record of verifications, intermediate decisions and what is open (the *why*; git holds *what changed*); its closing "Open" list is the project's state |
+| `docs/README.md` | Entry point to the research side for colleagues |
+| `docs/data/` | `raw/` holds the MedCap exports and `processed/` the tables prepared from them. Git tracks only `README.md` (each export's SHA-256 and how a new export is filed), the online survey's data dictionary and `processed/codebook.csv` |
+| `docs/scripts/` | The R analysis, an renv project run from that folder, with its tests in `tests/`. `01_import_clean.R` prepares the tables and flags, without excluding anyone, the cases the group has still to decide |
+| `docs/literature/` | `bibliography.json` (CSL JSON) is the record and the only tracked file; the texts stay local. Managed with `literature.py` of aldogor-research, whose `check` runs before a change to the library is committed; when the script finds no library, the plugin is updated (aldogor-core 0.17.0 or later) and no new library is created |
+| `docs/drive/` | Local copy of the team's Google Drive folder, gitignored; Drive is the original |
+| `archive/` | Dated documents of completed development work |
+| `stilme_qe_data_dictionary.csv` | The REDCap data dictionary the app writes to; it changes with every questionnaire field |
+| `publish.txt` | The include-list of the public version: a new file meant for it, or a move of a published one, updates the list in the same commit |
+| `.claude/` | `settings.json` is the repository's whole Claude configuration: the marketplaces, the plugins and the hook that offers the setup in an incomplete clone. `skills/stilme-*/` hold the procedures: `stilme-setup` (a colleague's clone, internal), `stilme-questionnaire-changes`, `stilme-debug-tools` |
+| `local.properties` | Git-ignored secrets and URLs (`REDCAP_API_TOKEN`, `REDCAP_API_URL`, `UPDATE_JSON_URL`), injected into `BuildConfig` at build time; the template is `local.properties.example`. `update-info.json`, also git-ignored, goes to Google Drive with the APK |
+
+## Rules easiest to break
+
+- **Raw data are immutable.** Nothing under `docs/data/raw/` is edited, opened and saved again, or staged: pseudonymised health data never reach GitHub, this repository included. A hash that fails means a damaged copy, and the recorded hash stays as it is.
+- **Numbers for a paper come from R scripts** in `docs/scripts/`, reading `docs/data/`. Exploration may use any tool; a number found that way enters a paper only once a script reproduces it.
+- **No personal data.** The app collects no name, email, phone number or device ID; study IDs are 16 random alphanumeric characters (`StudyConfig.ID_CHARS`); the network configuration blocks cleartext traffic.
+- **The consent screen keeps its two Yes/No questions**, both required (DPO requirement), and they are never merged. Onboarding is linear, with no back navigation on the key steps.
+- **User-facing text is Italian and lives in `strings.xml`**, never in Kotlin code.
+- **The public repository changes only through publication.** Nobody works in its clone, the sibling folder `../stilme-qe-app-public`. The owner runs the publish script of the aldogor-share skill (`publish.py --check` lists what would go and writes nothing; without it the script builds the public tree from HEAD and commits it in the clone) and pushes that clone.
+- **Nothing secret is committed**: `local.properties` and `.env` stay local.
 
 ## Conventions
 
-These hold for everyone who works in this repository and for their Claude. Where authority lives is in *File Locations* below.
+These hold for everyone who works in this repository and for their Claude.
 
-- **Git practice:** shared. Each piece of work goes on its own branch and reaches `master` through a pull request, which the repository owner merges; nobody commits to `master` directly. Nothing secret is committed: `local.properties` and `.env` stay local.
-- **Language.** Documents, code comments and commit messages in English; the app's user-facing text in Italian, in `strings.xml`.
-- **Journal.** `JOURNAL.md` gets one entry per working session that verifies or decides something, headed by its ISO date, with the data and sources behind each decision; the entry's last line names what it opened and what it closed (`Opened: ...; closed: ...`). The journal ends with one open list (`## Open`), edited in place, which is the state of the project. Consolidated decisions go into `docs/PROJECT_CONTEXT.md`; git is the changelog, so there is no CHANGELOG or TODO file.
+- **Git practice:** shared. Each piece of work goes on its own branch and reaches `main` through a pull request, which the repository owner merges; nobody commits to `main` directly.
+- **Tests** run before a pull request: `./gradlew test` for the app, and `Rscript -e "testthat::test_dir('tests')"` in `docs/scripts/` for the analysis. Tests ship with the code they cover.
+- **Screens.** A change to a screen starts from a list of what the screen does today and ends with the owner's walk through the running app against that list.
+- **Language.** Documents, code comments and commit messages in English; the app's user-facing text in Italian.
+- **Journal.** `JOURNAL.md` gets one entry per working session that verifies or decides something, headed by its ISO date, with the data and sources behind each decision; the entry's last line names what it opened and what it closed (`Opened: ...; closed: ...`). The journal ends with one open list (`## Open`), edited in place. Consolidated decisions go into `docs/PROJECT_CONTEXT.md`; git is the changelog, so there is no CHANGELOG or TODO file.
 - **Citations.** Inline author and year, hyperlinked to the DOI: `[Smith et al., 2023](https://doi.org/10.xxxx/yyyy)`; a source without a stable link is cited inline without one. Works in the library are identified by their key in `docs/literature/bibliography.json`, and every citation is checked against its source before it enters a document.
-- **Data.** `docs/data/raw/` is read-only; every transformation is a script, and processed data are tidy CSV with a codebook. A value without a source is written [n/d], never inferred.
+- **Data.** Every transformation is a script, and processed data are tidy CSV with a codebook. A value without a source is written [n/d], never inferred.
 - **Writing.** No dashes as punctuation (neither em nor en dashes, nor `--`): commas, colons, parentheses or separate sentences instead.
 
----
+## The app
 
-## Key Concepts
+### Study logic
 
-### Study Groups
+Group assignment, in `ScoringEngine.calculateGroup()`:
 
-Group assignment logic (in `ScoringEngine.calculateGroup()`):
-1. If `using_time_limits == 1`, `INELIGIBLE_USING_STL` (code -1)
-2. If `is_unito_student == 0` OR `age_group == 99`, `INELIGIBLE_SCREENING` (code -2)
-3. If `interested_in_limit == 0`, `CONTROL` (code 1)
-4. If `limit_method == 1`, `STL_INTERVENTION` (code 2)
-5. If `limit_method == 2`, `PERSONAL_COMMITMENT` (code 3)
+1. `using_time_limits == 1`: `INELIGIBLE_USING_STL` (code -1)
+2. `is_unito_student == 0` or `age_group == 99`: `INELIGIBLE_SCREENING` (code -2)
+3. `interested_in_limit == 0`: `CONTROL` (code 1)
+4. `limit_method == 1`: `STL_INTERVENTION` (code 2)
+5. `limit_method == 2`: `PERSONAL_COMMITMENT` (code 3)
 
-### Timepoints
+`Timepoint` (in `study/StudyModels.kt`): T0 baseline, then T1 to T4 at 30, 60, 90 and 120 days from baseline, each with a window of 30 days; after T4 the study is complete. `StudyManager.getActiveTimepoint()` and `Timepoint.earliestDue()` offer the earliest incomplete timepoint whose window has opened, so a skipped window can still be completed.
 
-`Timepoint` (in `study/StudyModels.kt`): T0 baseline, then T1 to T4 at 30, 60, 90 and 120 days from baseline. Each questionnaire window lasts 30 days. After T4 the study is complete.
+Five scales (BSMAS, PHQ-9, GAD-7, FoMO, PSS-10). Only the PSS-10 has reverse-scored items: 4, 5, 7 and 8 are scored as `4 - response` before summing. Conditional questions use `showIf = BranchingCondition(dependsOn, operator, value)` on `QuestionDefinition`.
 
-### Scales and branching
+### Code patterns
 
-Five scales (BSMAS, PHQ-9, GAD-7, FoMO, PSS-10). Only PSS-10 has reverse-scored items: 4, 5, 7 and 8 are scored as `4 - response` before summing. Conditional questions use `showIf = BranchingCondition(dependsOn, operator, value)` on `QuestionDefinition`.
+**Encrypted storage.** All encrypted prefs go through `EncryptedPrefsFactory.create(context, fileName)`, which wraps `EncryptedSharedPreferences` (AES-256-GCM) and caches one instance per file name. Three files exist: `stilme_qe_encrypted_prefs` (`DataStorage`, usage data), `stilme_study_state` (`StudyManager`, the single source of the participant's state and study ID) and `stilme_secure_tokens` (`SecureTokenManager`, API token override). The factory deletes and recreates a file only when an `AEADBadTagException` is in the cause chain (keystore corruption, data already unrecoverable), with an unencrypted `{fileName}_fallback` if recreation also fails; any other security error retries without deleting, so valid study data survive a transient failure.
 
----
+**Null safety of the study state.** The boolean accessors of `StudyManager` (`isEligible()`, `isQuestionnaireDue()`, `hasCompletedOnboarding()`, `isStudyComplete()`) compare with `== true`, so a null `ParticipantState` gives `false` and no study screen appears before onboarding.
 
-## Code Patterns
+**REDCap submission.** Results are a `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `ParseError`). A failed submission is queued in Room (`SubmissionQueue`) and retried by `SyncWorker`, which first resets the rows left in `SUBMITTING` by a killed worker, then processes every pending row without stopping at the first error. After `MAX_RETRIES` (5) a row becomes `EXPIRED` and keeps its payload, so the questionnaire stays recoverable. Only a `NetworkError` asks WorkManager for a retry. At submit time (`QuestionnaireActivity`) a 4xx `ServerError` or a `ParseError` is permanent: the timepoint is not marked complete and the participant sees an error. A `NetworkError` or a 5xx marks it complete with an offline note.
 
-### Encrypted Storage
+**Permissions.** `PACKAGE_USAGE_STATS`, `POST_NOTIFICATIONS` and the battery optimization exemption are all mandatory, and `PermissionRecoveryActivity` blocks the app while one is revoked.
 
-All encrypted prefs go through `EncryptedPrefsFactory.create(context, fileName)`, which wraps `EncryptedSharedPreferences` with automatic recovery from Android Keystore corruption (`AEADBadTagException`).
+### Build
 
-**Instance caching**: `create()` caches one `SharedPreferences` per file name (creation is expensive and not thread-safe for concurrent first-time creation of the same file).
-
-**Recovery chain**: first attempt, then catch `GeneralSecurityException`. Only if an `AEADBadTagException` is in the cause chain (true keystore corruption, data already unrecoverable) is the file deleted and recreated; a fallback to unencrypted `{fileName}_fallback` prevents a crash loop if recreation also fails. A **transient** `GeneralSecurityException` (e.g. a concurrent-creation race) retries **without deleting**, so valid study data is never destroyed by a non-corruption error.
-
-Three encrypted prefs files exist:
-- `stilme_qe_encrypted_prefs` (DataStorage): usage data
-- `stilme_study_state` (StudyManager): participant state, timepoints, study ID (single source of truth)
-- `stilme_secure_tokens` (SecureTokenManager): API token override
-
-### Null-Safety Convention for Study State
-
-`StudyManager` boolean accessors use `== true` (not `!= false`) so that a null `ParticipantState` returns `false`: `isEligible()`, `isQuestionnaireDue()`, `hasCompletedOnboarding()`, `isStudyComplete()` are all `false` when no state exists. This prevents showing study UI to users who haven't completed onboarding yet.
-
-### REDCap Submission
-
-Uses `RedcapResult` sealed class (`Success`, `NetworkError`, `ServerError`, `ParseError`). Failed submissions are queued in Room (`SubmissionQueue`) and retried by `SyncWorker`.
-
-**SyncWorker behavior**: resets rows orphaned in `SUBMITTING` (worker killed mid-flight) back to `PENDING` at the start of each run, then processes all pending submissions (doesn't stop on first error). Submissions exceeding `MAX_RETRIES` (5) are marked `EXPIRED`; **the payload is kept, never deleted**, so questionnaire data stays recoverable. Only `NetworkError` triggers `Result.retry()`; `ServerError` and `ParseError` don't request immediate WorkManager retry.
-
-**Permanent vs transient failures at submit time** (`QuestionnaireActivity`): a 4xx `ServerError` or `ParseError` is treated as permanent: the timepoint is **not** marked complete and the participant sees a real error (data stays queued for retry). Only `NetworkError` and 5xx `ServerError` mark the timepoint complete with an offline note. This prevents a deterministic rejection (bad token, Data Dictionary mismatch) from being shown as success and then silently lost.
-
-**Missed windows**: `StudyManager.getActiveTimepoint()` / `Timepoint.earliestDue()` offer the earliest *incomplete* timepoint whose window has opened, so a skipped 30-day window can still be completed rather than being permanently lost.
-
----
-
-## Important Constraints
-
-### Permissions
-
-All three are **mandatory**; `PermissionRecoveryActivity` blocks the app if any is revoked:
-- `PACKAGE_USAGE_STATS`: social media usage data
-- `POST_NOTIFICATIONS`: questionnaire reminders
-- Battery Optimization Exemption: reliable background work
-
-### Onboarding and consent
-
-Onboarding is linear, with no back navigation on the key steps. The consent screen has two Yes/No questions, both required (DPO requirement); do not merge them.
-
-### Privacy
-
-- **No PII**: never collect name, email, phone, device ID
-- **Anonymous IDs**: 16-char random alphanumeric (`StudyConfig.ID_CHARS`)
-- **Encryption**: AES-256-GCM via `EncryptedPrefsFactory`
-- **HTTPS only**: network security config blocks cleartext
-
-### Italian Language
-
-All user-facing text in `strings.xml`. Never hardcode Italian in Kotlin code.
-
----
-
-## Build Configuration
-
-Secrets and URLs (`REDCAP_API_TOKEN`, `REDCAP_API_URL`, `UPDATE_JSON_URL`) come from the git-ignored `local.properties` (template: `local.properties.example`) and are injected into `BuildConfig` at build time. Room annotation processing uses KSP, not KAPT (faster, Windows-compatible).
-
-### Toolchain & CLI Workflow
-
-The dev machine has no Android Studio: everything runs from the command line. Gradle builds, the Android CLI drives emulators and deploys.
-
-- **JDK**: Gradle needs a JDK 17+ on `JAVA_HOME`; nothing bundles one any more. If `java` is not found, install one (`winget install EclipseAdoptium.Temurin.21.JDK`) and point the user-level `JAVA_HOME` at it, otherwise every `./gradlew` call dies with an invalid `JAVA_HOME`.
-- **Android SDK**: `%LOCALAPPDATA%\Android\Sdk` (`ANDROID_HOME`), with `platform-tools` and `emulator` on PATH; platforms 33 to 36 and the API 36 system images are installed.
-- **Android CLI**: the `android` command on PATH (WinGet shim, `winget install Google.AndroidCLI`) downloads the real binary into `%USERPROFILE%\.android\bin\android-cli.exe` on first run and keeps it updated. `android skills add <id>` installs Google's Android skills into the current project's `.claude/skills/` (gitignored there).
-- **AVD**: `medium_phone` (API 36, google_apis_playstore x86_64), created with `android emulator create medium_phone`; the first `create` downloads the system image (about 1.5 GB) and takes several minutes.
-- The debug APK is custom-named: `app/build/outputs/apk/debug/MIND-TIME.apk`.
-- **R** (data analysis): 4.6.1 in `C:\Program Files\R\R-4.6.1`, its `bin` on the user PATH, so scripts run with `Rscript script.R`; the folder name carries the version, so the PATH entry changes with each R upgrade. Packages live only in the renv library of `docs/scripts/` (`renv::restore()` there on a new machine), with renv's global cache switched off: R started from the Claude desktop app resolves `%LOCALAPPDATA%` to the app's private folder (`AppData\Local\Packages\Claude_…\LocalCache\Local`), so a user library or cache written from a session would be invisible to R started anywhere else.
-- **Kotlin language server** (personal, for Claude Code's LSP tool): JetBrains' [kotlin-lsp](https://github.com/Kotlin/kotlin-lsp), an alpha (EAP) build.
-  - Install: the standalone Windows zip of a [release](https://github.com/Kotlin/kotlin-lsp/releases), checked against its SHA-256, unpacked to `%USERPROFILE%\.kotlin-lsp\<version>`. It carries its own Java runtime and starts from `bin\intellij-server.exe`. The `kotlin-lsp` command is a pair of shims in `%USERPROFILE%\bin`, which is on the user PATH: `kotlin-lsp.cmd`, and `kotlin-lsp` for Git Bash. Both set `TMP`/`TEMP` to `C:\WINDOWS\TEMP` (see the loopback issue below) and start the exe.
-  - Plugin: `claude plugin install kotlin-lsp@claude-plugins-official --scope local`, recorded in the git-ignored `.claude/settings.local.json`, so the shared `settings.json` stays as it is.
-  - Gradle import: the server's import stops on this project's test components ([Kotlin/kotlin-lsp#253](https://github.com/Kotlin/kotlin-lsp/issues/253): BuildConfig and viewBinding in androidTest, KSP in unit tests) and then drops the whole `:app` module. `%USERPROFILE%\.gradle\init.d\kotlin-lsp-android.gradle` switches those components off during that import only (it acts when the build carries `-Dcom.jetbrains.ls.imports.gradle`). The server therefore analyses `app/src/main`, and not `app/src/test` or `app/src/androidTest`.
-  - Each session imports and indexes the project afresh: the first answers arrive after about half a minute, and calls made earlier return nothing. Each run leaves a folder of up to a few MB, `idea-system<number>`, in `C:\WINDOWS\TEMP`, which can be deleted when no server is running.
-  - Upgrade: unpack the new zip next to the old one, change the version in both shims, and delete the init script once a release fixes #253.
-
-Emulator + deploy (`run` installs and launches in one step):
-
-```powershell
-android emulator list
-android emulator start medium_phone
-android run --apks=app/build/outputs/apk/debug/MIND-TIME.apk --activity=com.aldogor.stilme_qe_app.MainActivity
-android emulator stop medium_phone
-```
-
-`emulator start` is meant to return once the device is ready, but the first boot of a fresh image can outlast its own wait: `adb shell getprop sys.boot_completed` printing `1` is the reliable signal.
-
-> **⚠️ Known machine issue: Gradle "Unable to establish loopback connection"**. On this Windows machine, AF_UNIX sockets fail inside `%TEMP%` (the user's `AppData\Local\Temp`), which breaks Java NIO pipes (JDK ≥16 puts pipe socket files there). Reproduces on JDK 17 and JDK 21, from any launcher that inherits the user `TEMP`.
->   - Run Gradle with `$env:TMP = "C:\WINDOWS\TEMP"; $env:TEMP = "C:\WINDOWS\TEMP"` set first (or set the user-level `TMP`/`TEMP` variables to that directory once).
->
-> Diagnosed 2026-07-05; root cause is directory-specific (likely a security-filter driver on the user Temp dir), machine works normally otherwise.
-
----
-
-## Repository layout: internal and public
-
-This repository is the **internal** one and holds the whole project: the app, `docs/`, `archive/` and `JOURNAL.md`. Its remote `origin` is the private GitHub repository `aldogor/stilme-qe-app-internal`. The **public** repository `aldogor/stilme-qe-app` receives only what `publish.txt`, at the root, lists: an include-list, so a tracked file it does not name stays internal.
-
-- Work reaches `master` on `origin` through pull requests, as *Conventions* says. The public repository has its own clone in the sibling folder `../stilme-qe-app-public` (once per machine: `gh repo clone aldogor/stilme-qe-app ../stilme-qe-app-public`), where nobody works, so the internal history reaches it only through publication.
-- To publish the app, the owner runs the publish script of the aldogor-share skill (plugin aldogor-code): `python <skill folder>/scripts/publish.py --check` lists what would go and writes nothing; without `--check` it builds the public tree from HEAD, holds back the files that never go public, stops on a stale rule or a credential, writes the tree into the sibling clone and commits there ("Publish <sha>: <subject>"). Pushing that clone is the owner's step.
-- A new file meant for the public version, or a move of a published one, updates `publish.txt` in the same commit.
-
-## File Locations
-
-| Content | Location |
-|---|---|
-| Completed development specs, plans and reviews | `archive/`: dated documents, tracked in the internal repository only. |
-| Research project docs (ethics/DPO, communication, article drafts) | `docs/`: tracked in the internal repository only (see *Repository layout*). `docs/PROJECT_CONTEXT.md` is the project briefing; `docs/drive/` mirrors the team's Google Drive folder and is gitignored |
-| Project journal: dated record of verifications, intermediate decisions and what is open (the *why*; git holds *what changed*) | `JOURNAL.md`: update it, with the date, in every session that verifies or decides something; the open list at its end is the project's state. Internal only |
-| Final study data (MedCap exports) | `docs/data/raw/`: **immutable**, read-only originals; cleaned data go to `docs/data/processed/` as tidy CSV with a codebook, and every transformation is a script. Both folders are gitignored, since pseudonymised health data never goes to GitHub, not even the internal repository; only the online survey's data dictionary and `codebook.csv`, which describe fields, are tracked, and `.gitattributes` keeps git from converting raw files, which are checked byte for byte. Exports reach colleagues through the team's folder on the university Google Drive, and `docs/data/README.md` describes how one is filed |
-| Data analysis | Exploration may be done directly, with any tool. **Every result meant for the paper (numbers, tables, figures) is produced by an R script** in `docs/scripts/`, reading the data from `docs/data/`; a number found during exploration enters the paper only once an R script reproduces it. `docs/scripts/` is an renv project (packages in `DESCRIPTION` and `renv.lock`, no global cache): run R from that folder. `01_import_clean.R` turns the latest raw exports into the tidy tables of `docs/data/processed/` and flags, without excluding anyone, the cases the group has still to decide; the tests in `docs/scripts/tests/` run with `Rscript -e "testthat::test_dir('tests')"`. The research questions, and whether and how the data answer each, live only in `docs/PROJECT_CONTEXT.md`, referred to by their content, never by a number |
-| Literature library for writing (index by citation key, PDF and Markdown text of each work) | `docs/literature/`, one flat folder, managed as aldogor-research's `references/literature.md` describes: `bibliography.json`, a CSL JSON array that Pandoc reads and Zotero imports as it is, is the record and the only file git tracks (`.gitignore`: `docs/literature/*`, `!docs/literature/bibliography.json`); `<key>.pdf` and `<key>.md`, which holds the abstract when no full text is held, stay local. The skill's `scripts/literature.py` adds, fetches, collects, rewrites Markdown, checks and lists, and `check` runs before a change to the library is committed. The record needs aldogor-core 0.17.0 or later: when the script finds no library, the plugin is updated (`claude plugin update aldogor-core@aldogor-claude-plugins`, then `/reload-plugins`), and no new library is created. The PDFs committed while the whole library was tracked remain in this repository's history; the public cut never carried them |
-| Claude configuration and project skills | `.claude/settings.json` (tracked) is the repository's whole Claude configuration: the `aldogor-claude-plugins` and official marketplaces and the plugins the project uses, installed through the trust prompt; `aldogor-claude-plugins` updates itself in the background (`autoUpdate`), and Claude Code then asks for `/reload-plugins`. A `SessionStart` hook in the same file tells Claude, in a clone of the internal repository, when the local setup is incomplete (no R packages, no MedCap export or no prepared tables), and Claude then offers to guide the person through it with the `stilme-setup` skill. `.claude/skills/stilme-*/` holds the project's procedures for AI assistants; `stilme-setup` is internal and left out of the public cut. `settings.local.json` keeps the permissions Claude records there and the plugins a person installs for themselves at local scope (the Kotlin language server, in *Toolchain & CLI Workflow*); it, `CLAUDE.local.md` and third-party skills stay local |
-| REDCap Data Dictionary | `stilme_qe_data_dictionary.csv` |
-| Update distribution | `update-info.json` (git-ignored, uploaded to Google Drive together with the APK) |
+Plain Gradle from the command line; the prerequisites and the emulator commands are in `README.md`. Room's annotation processing uses KSP. The debug APK is `app/build/outputs/apk/debug/MIND-TIME.apk`.

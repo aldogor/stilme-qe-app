@@ -34,4 +34,4 @@ Uninstall and reinstall, or Settings > Apps > MIND TIME > Clear data: both wipe 
 
 ## Emulator
 
-Machine setup (Android CLI, AVD name, TEMP workaround for Gradle) is in `CLAUDE.md`, section Toolchain.
+The emulator and deploy commands are in `README.md`, under *For Developers*.
